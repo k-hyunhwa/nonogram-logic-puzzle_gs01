@@ -156,22 +156,18 @@
         </div>
       </div>
 
-      <!-- Controls: Mobile Ranking Button, Tutorial & Multilingual Switcher (All Visible on Top) -->
+      <!-- Controls: Mobile Ranking Button, Tutorial & Multilingual Switcher -->
       <div class="flex items-center gap-2 sm:gap-3 ml-auto">
-        
-        <!-- Mobile Ranking Toggle Button -->
         <button onclick="toggleRankingDrawer()" class="lg:hidden flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-950/80 border border-amber-600/60 text-amber-300 text-xs font-bold transition shadow-sm hover:bg-amber-900">
           <i class="fa-solid fa-trophy text-amber-400"></i>
           <span data-i18n="btn_ranking">순위표</span>
         </button>
 
-        <!-- Tutorial Button -->
         <button onclick="openTutorialModal()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-950 hover:bg-indigo-900 border border-indigo-700/70 text-indigo-200 hover:text-white text-xs font-bold transition shadow-sm">
           <i class="fa-solid fa-circle-question text-indigo-400"></i>
           <span data-i18n="btn_tutorial">튜토리얼</span>
         </button>
 
-        <!-- All 4 Language Buttons Always Visible on Top Bar -->
         <div class="inline-flex rounded-lg bg-slate-900/90 border border-slate-700/80 p-0.5 shadow-inner" role="group" aria-label="언어 선택">
           <button onclick="setLanguage('ko')" id="lang-btn-ko" class="px-2.5 py-1 rounded-md text-xs font-bold transition bg-indigo-600 text-white shadow-sm" title="한국어">
             한국어
@@ -186,7 +182,6 @@
             RU
           </button>
         </div>
-
       </div>
 
     </div>
@@ -209,8 +204,6 @@
 
       <!-- 4 Difficulty Columns Grid -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3.5">
-        
-        <!-- 초급 -->
         <div class="bg-[#141824] border border-slate-800 rounded-xl p-3 flex flex-col justify-between shadow-md">
           <div class="flex items-center justify-between mb-2">
             <span class="text-xs font-black px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800/60" data-i18n="diff_novice">
@@ -221,7 +214,6 @@
           <div class="flex items-center justify-between gap-1 mt-1 px-1" id="indicator-group-0"></div>
         </div>
 
-        <!-- 중급 -->
         <div class="bg-[#141824] border border-slate-800 rounded-xl p-3 flex flex-col justify-between shadow-md">
           <div class="flex items-center justify-between mb-2">
             <span class="text-xs font-black px-2 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800/60" data-i18n="diff_medium">
@@ -232,7 +224,6 @@
           <div class="flex items-center justify-between gap-1 mt-1 px-1" id="indicator-group-1"></div>
         </div>
 
-        <!-- 상급 -->
         <div class="bg-[#141824] border border-slate-800 rounded-xl p-3 flex flex-col justify-between shadow-md">
           <div class="flex items-center justify-between mb-2">
             <span class="text-xs font-black px-2 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800/60" data-i18n="diff_hard">
@@ -243,7 +234,6 @@
           <div class="flex items-center justify-between gap-1 mt-1 px-1" id="indicator-group-2"></div>
         </div>
 
-        <!-- 고급 -->
         <div class="bg-[#141824] border border-slate-800 rounded-xl p-3 flex flex-col justify-between shadow-md">
           <div class="flex items-center justify-between mb-2">
             <span class="text-xs font-black px-2 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-800/60" data-i18n="diff_expert">
@@ -253,17 +243,12 @@
           </div>
           <div class="flex items-center justify-between gap-1 mt-1 px-1" id="indicator-group-3"></div>
         </div>
-
       </div>
     </section>
 
     <!-- GAME BOARD & RANKING PANEL WRAPPER -->
     <div class="flex flex-col lg:flex-row gap-4 items-start w-full">
-      
-      <!-- GAME BOARD CONTAINER -->
       <section class="bg-[#12151f] border border-slate-800/80 rounded-2xl p-3.5 sm:p-5 shadow-xl flex flex-col items-center flex-1 w-full">
-        
-        <!-- Current Stage Header & Navigation -->
         <div class="w-full flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3 mb-4">
           <div class="flex items-center gap-2">
             <button onclick="prevStage()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center transition" title="이전 문제">
@@ -283,13 +268,11 @@
             </button>
           </div>
 
-          <!-- Timer Badge -->
           <div class="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-900 border border-slate-800 text-xs font-mono font-bold text-amber-400 shadow-inner">
             <i class="fa-regular fa-clock text-amber-400"></i>
             <span id="game-timer">00:00</span>
           </div>
 
-          <!-- Mode Toggle & Reset -->
           <div class="flex items-center gap-2">
             <div class="flex items-center gap-1.5 bg-slate-900 p-1 rounded-xl border border-slate-800">
               <button onclick="setToolMode('fill')" id="tool-fill-btn" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition bg-indigo-600 text-white shadow-md">
@@ -308,7 +291,6 @@
           </div>
         </div>
 
-        <!-- Instruction / Hint -->
         <div class="text-[11px] sm:text-xs text-slate-400 mb-3 text-center flex flex-wrap items-center justify-center gap-3 bg-slate-900/60 px-3 py-1.5 rounded-full border border-slate-800/50">
           <span class="flex items-center gap-1">
             <i class="fa-solid fa-computer-mouse text-indigo-400"></i>
@@ -321,29 +303,21 @@
           </span>
         </div>
 
-        <!-- Nonogram Canvas -->
         <div class="w-full flex justify-center overflow-x-auto pb-4 pt-1 custom-scroll" id="board-scroll-area">
           <div id="nonogram-container" class="inline-block bg-white rounded-xl shadow-2xl p-2 sm:p-3 border-2 border-slate-900 select-none"></div>
         </div>
 
-        <!-- Submit Button -->
         <div class="w-full flex items-center justify-center mt-4 pt-4 border-t border-slate-800">
           <button onclick="checkAnswer()" class="w-full sm:w-auto px-8 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-extrabold text-sm sm:text-base shadow-lg shadow-emerald-950/70 hover:shadow-emerald-900/90 active:scale-95 transition flex items-center justify-center gap-2">
             <i class="fa-solid fa-circle-check text-lg"></i>
             <span data-i18n="btn_check">정답 확인 및 기록 등록</span>
           </button>
         </div>
-
       </section>
 
-      <!-- ================= SLIDE RANKING PANEL ================= -->
-      <!-- Mobile Backdrop -->
+      <!-- 랭킹 슬라이드 패널 -->
       <div id="ranking-backdrop" onclick="toggleRankingDrawer(false)" class="hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden transition-opacity"></div>
-
-      <!-- Slide Drawer (PC: Fixed Open / Mobile: Slide Out) -->
       <aside id="ranking-drawer" class="fixed top-0 right-0 h-full w-80 z-50 transform translate-x-full lg:translate-x-0 lg:static lg:h-[630px] lg:w-80 bg-[#141824] border-l lg:border border-slate-800 lg:rounded-2xl flex flex-col shadow-2xl transition-transform duration-300 ease-in-out">
-        
-        <!-- Ranking Header -->
         <div class="p-3.5 border-b border-slate-800 flex items-center justify-between bg-[#10131d] lg:rounded-t-2xl">
           <div class="flex items-center gap-2">
             <i class="fa-solid fa-trophy text-amber-400"></i>
@@ -365,22 +339,17 @@
           </div>
         </div>
 
-        <!-- Ranking List Body -->
         <div class="flex-1 overflow-y-auto p-2.5 custom-scroll space-y-1.5" id="ranking-list-container">
           <div class="text-center py-12 text-xs text-slate-500" data-i18n="ranking_loading">순위표 데이터를 조회 중입니다...</div>
         </div>
 
-        <!-- Ranking Footer Note -->
         <div class="p-2.5 bg-[#0f121b] border-t border-slate-800/80 text-[10px] text-slate-400 text-center lg:rounded-b-2xl">
           <span data-i18n="ranking_notice" data-i18n-mode="block">* 정답 확인 시 클리어 시간이 자동으로 서버에 기록됩니다.</span>
         </div>
       </aside>
-
     </div>
-
   </main>
 
-  <!-- ================= FOOTER ================= -->
   <footer class="bg-[#0e111a] border-t border-slate-800/80 py-3 text-center text-slate-400 text-[11px]">
     <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-1.5">
       <p class="font-medium">관산중학교 정보/수학 융합 체험 프로그램</p>
@@ -388,7 +357,7 @@
     </div>
   </footer>
 
-  <!-- ================= LOGIN MODAL ================= -->
+  <!-- 모달들 생략 없이 온전히 포함 -->
   <div id="login-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3">
     <div class="bg-[#141824] rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-700 flex flex-col space-y-4">
       <div class="text-center space-y-1">
@@ -411,51 +380,38 @@
       </div>
 
       <p id="login-error-msg" class="text-xs text-rose-400 text-center font-semibold hidden"></p>
-
       <button onclick="handleLoginSubmit()" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-sm shadow-lg shadow-indigo-950 transition active:scale-95">
         <span data-i18n="login_btn">퍼즐 게임 시작하기</span>
       </button>
     </div>
   </div>
 
-  <!-- ================= TUTORIAL MODAL ================= -->
   <div id="tutorial-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3">
     <div class="bg-[#141824] rounded-2xl max-w-2xl w-full max-h-[92vh] overflow-hidden shadow-2xl flex flex-col border border-slate-700">
-      
-      <!-- Modal Header -->
       <div class="p-4 bg-indigo-600 text-white flex items-center justify-between">
         <div class="flex items-center gap-2">
           <i class="fa-solid fa-graduation-cap text-xl"></i>
-          <div>
-            <h3 class="font-black text-base sm:text-lg" data-i18n="tut_title">네모로직 퍼즐 규칙</h3>
-          </div>
+          <div><h3 class="font-black text-base sm:text-lg" data-i18n="tut_title">네모로직 퍼즐 규칙</h3></div>
         </div>
         <button onclick="closeTutorialModal()" class="w-8 h-8 rounded-full bg-indigo-700/80 hover:bg-indigo-700 flex items-center justify-center text-white font-bold transition">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
 
-      <!-- Tutorial Navigation Tabs -->
       <div class="flex border-b border-slate-700/80 bg-[#0f121d] px-4 pt-2 gap-2 text-xs font-bold">
         <button id="tut-tab-btn-1" onclick="switchTutTab(1)" class="pb-2.5 px-3 border-b-2 border-indigo-500 text-indigo-400 flex items-center gap-1.5 transition">
-          <i class="fa-solid fa-book-open"></i>
-          <span data-i18n="tut_tab_basic">기본 규칙 & 단계별 풀이</span>
+          <i class="fa-solid fa-book-open"></i><span data-i18n="tut_tab_basic">기본 규칙 & 단계별 풀이</span>
         </button>
         <button id="tut-tab-btn-2" onclick="switchTutTab(2)" class="pb-2.5 px-3 border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-1.5 transition">
-          <i class="fa-solid fa-lightbulb text-amber-400"></i>
-          <span data-i18n="tut_tab_pro">고난이도 필수 팁 (교집합)</span>
+          <i class="fa-solid fa-lightbulb text-amber-400"></i><span data-i18n="tut_tab_pro">고난이도 필수 팁 (교집합)</span>
         </button>
       </div>
 
-      <!-- Modal Body -->
       <div class="p-5 overflow-y-auto space-y-5 text-xs sm:text-sm text-slate-300 custom-scroll leading-relaxed">
-        
-        <!-- TAB 1: BASIC RULES & 6-STEP EXAMPLE (우산 풀이) -->
         <div id="tut-content-1" class="space-y-4">
           <div class="bg-indigo-950/50 border border-indigo-700/40 rounded-xl p-3.5 space-y-2">
             <h4 class="font-black text-indigo-300 text-sm flex items-center gap-2">
-              <i class="fa-solid fa-check-double text-indigo-400"></i>
-              <span data-i18n="tut_basic_header">기본 규칙 3가지</span>
+              <i class="fa-solid fa-check-double text-indigo-400"></i><span data-i18n="tut_basic_header">기본 규칙 3가지</span>
             </h4>
             <ul class="space-y-1.5 text-slate-300 list-disc list-inside">
               <li><strong class="text-white" data-i18n="tut_b1">1) 왼쪽과 위쪽 숫자는 연속해서 칠해져야 할 칸의 수</strong><span data-i18n="tut_b1_sub">를 의미합니다.</span></li>
@@ -463,541 +419,38 @@
               <li><strong class="text-white" data-i18n="tut_b3">3) 칠할 수 없는 빈칸</strong><span data-i18n="tut_b3_sub">에는 X표시를 해두면 남은 칸을 쉽게 유추할 수 있습니다.</span></li>
             </ul>
           </div>
-
-          <!-- Step-by-Step 6 Stages Breakdown -->
-          <div>
-            <h4 class="font-black text-white text-sm mb-2.5 flex items-center gap-2">
-              <span class="w-5 h-5 rounded-md bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center text-[11px]">예</span>
-              <span data-i18n="tut_steps_title">5×5 우산 퍼즐로 배우는 6단계 풀이 과정</span>
-            </h4>
-
-            <!-- 2D Visual Demonstration Grid -->
-            <div class="bg-[#0b0e17] border border-slate-700/80 rounded-2xl p-3 sm:p-4 mb-4 shadow-inner">
-              <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 justify-items-center">
-                
-                <!-- Diagram 1 -->
-                <div class="flex flex-col items-center">
-                  <div class="flex items-center gap-1.5 mb-1.5 self-start pl-1">
-                    <span class="text-rose-500 font-black text-base sm:text-lg">1.</span>
-                  </div>
-                  <div class="bg-white p-1 rounded-lg border border-slate-300 shadow-md inline-block select-none">
-                    <table class="border-collapse text-[9px] font-mono font-bold text-center">
-                      <tr>
-                        <td class="w-4 h-6 border-r-2 border-b-2 border-slate-600 bg-slate-50"></td>
-                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700">2</td>
-                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700"><div>3</div><div>1</div></td>
-                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700">5</td>
-                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700">3</td>
-                        <td class="w-4 h-6 border-b-2 border-slate-600 align-bottom pb-0.5 text-slate-700">2</td>
-                      </tr>
-                      <tr>
-                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">3</td>
-                        <td class="border border-slate-300 bg-white"></td>
-                        <td class="border border-slate-300 bg-white"></td>
-                        <td class="border border-slate-300 bg-slate-600"></td>
-                        <td class="border border-slate-300 bg-white"></td>
-                        <td class="border border-slate-300 bg-white"></td>
-                      </tr>
-                      <tr>
-                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">5</td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                        <td class="border border-slate-300 bg-slate-700"></td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                      </tr>
-                      <tr>
-                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">5</td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                        <td class="border border-slate-300 bg-slate-700"></td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                      </tr>
-                      <tr>
-                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">1</td>
-                        <td class="border border-slate-300 bg-white"></td>
-                        <td class="border border-slate-300 bg-white"></td>
-                        <td class="border border-slate-300 bg-slate-600"></td>
-                        <td class="border border-slate-300 bg-white"></td>
-                        <td class="border border-slate-300 bg-white"></td>
-                      </tr>
-                      <tr>
-                        <td class="h-4 border-r-2 border-slate-600 bg-slate-50 pr-1 text-right text-slate-700">2</td>
-                        <td class="border border-slate-300 bg-white"></td>
-                        <td class="border border-slate-300 bg-white"></td>
-                        <td class="border border-slate-300 bg-slate-600"></td>
-                        <td class="border border-slate-300 bg-white"></td>
-                        <td class="border border-slate-300 bg-white"></td>
-                      </tr>
-                    </table>
-                  </div>
-                </div>
-
-                <!-- Diagram 2 -->
-                <div class="flex flex-col items-center">
-                  <div class="flex items-center gap-1.5 mb-1.5 self-start pl-1">
-                    <span class="text-rose-500 font-black text-base sm:text-lg">2.</span>
-                  </div>
-                  <div class="bg-white p-1 rounded-lg border border-slate-300 shadow-md inline-block select-none">
-                    <table class="border-collapse text-[9px] font-mono font-bold text-center">
-                      <tr>
-                        <td class="w-4 h-6 border-r-2 border-b-2 border-slate-600 bg-slate-50"></td>
-                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700">2</td>
-                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700"><div>3</div><div>1</div></td>
-                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700">5</td>
-                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700">3</td>
-                        <td class="w-4 h-6 border-b-2 border-slate-600 align-bottom pb-0.5 text-slate-700">2</td>
-                      </tr>
-                      <tr>
-                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">3</td>
-                        <td class="border border-slate-300 bg-white"></td>
-                        <td class="border border-slate-300 bg-white"></td>
-                        <td class="border border-slate-300 bg-slate-600"></td>
-                        <td class="border border-slate-300 bg-white"></td>
-                        <td class="border border-slate-300 bg-white"></td>
-                      </tr>
-                      <tr>
-                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">5</td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                        <td class="border border-slate-300 bg-slate-700"></td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                      </tr>
-                      <tr>
-                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">5</td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                        <td class="border border-slate-300 bg-slate-700"></td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                      </tr>
-                      <tr>
-                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">1</td>
-                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
-                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
-                        <td class="border border-slate-300 bg-slate-600"></td>
-                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
-                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
-                      </tr>
-                      <tr>
-                        <td class="h-4 border-r-2 border-slate-600 bg-slate-50 pr-1 text-right text-slate-700">2</td>
-                        <td class="border border-slate-300 bg-white"></td>
-                        <td class="border border-slate-300 bg-white"></td>
-                        <td class="border border-slate-300 bg-slate-600"></td>
-                        <td class="border border-slate-300 bg-white"></td>
-                        <td class="border border-slate-300 bg-white"></td>
-                      </tr>
-                    </table>
-                  </div>
-                </div>
-
-                <!-- Diagram 3 -->
-                <div class="flex flex-col items-center">
-                  <div class="flex items-center gap-1.5 mb-1.5 self-start pl-1">
-                    <span class="text-rose-500 font-black text-base sm:text-lg">3.</span>
-                  </div>
-                  <div class="bg-white p-1 rounded-lg border border-slate-300 shadow-md inline-block select-none">
-                    <table class="border-collapse text-[9px] font-mono font-bold text-center">
-                      <tr>
-                        <td class="w-4 h-6 border-r-2 border-b-2 border-slate-600 bg-slate-50"></td>
-                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700">2</td>
-                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700"><div>3</div><div>1</div></td>
-                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700">5</td>
-                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700">3</td>
-                        <td class="w-4 h-6 border-b-2 border-slate-600 align-bottom pb-0.5 text-slate-700">2</td>
-                      </tr>
-                      <tr>
-                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">3</td>
-                        <td class="border border-slate-300 bg-white"></td>
-                        <td class="border border-slate-300 bg-white"></td>
-                        <td class="border border-slate-300 bg-slate-600"></td>
-                        <td class="border border-slate-300 bg-white"></td>
-                        <td class="border border-slate-300 bg-white"></td>
-                      </tr>
-                      <tr>
-                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">5</td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                        <td class="border border-slate-300 bg-slate-700"></td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                      </tr>
-                      <tr>
-                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">5</td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                        <td class="border border-slate-300 bg-slate-700"></td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                      </tr>
-                      <tr>
-                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">1</td>
-                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
-                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
-                        <td class="border border-slate-300 bg-slate-600"></td>
-                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
-                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
-                      </tr>
-                      <tr>
-                        <td class="h-4 border-r-2 border-slate-600 bg-slate-50 pr-1 text-right text-slate-700">2</td>
-                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
-                        <td class="border border-slate-300 bg-white"></td>
-                        <td class="border border-slate-300 bg-slate-600"></td>
-                        <td class="border border-slate-300 bg-white"></td>
-                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
-                      </tr>
-                    </table>
-                  </div>
-                </div>
-
-                <!-- Diagram 4 -->
-                <div class="flex flex-col items-center">
-                  <div class="flex items-center gap-1.5 mb-1.5 self-start pl-1">
-                    <span class="text-rose-500 font-black text-base sm:text-lg">4.</span>
-                  </div>
-                  <div class="bg-white p-1 rounded-lg border border-slate-300 shadow-md inline-block select-none">
-                    <table class="border-collapse text-[9px] font-mono font-bold text-center">
-                      <tr>
-                        <td class="w-4 h-6 border-r-2 border-b-2 border-slate-600 bg-slate-50"></td>
-                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700">2</td>
-                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700"><div>3</div><div>1</div></td>
-                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700">5</td>
-                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700">3</td>
-                        <td class="w-4 h-6 border-b-2 border-slate-600 align-bottom pb-0.5 text-slate-700">2</td>
-                      </tr>
-                      <tr>
-                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">3</td>
-                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
-                        <td class="border border-slate-300 bg-white"></td>
-                        <td class="border border-slate-300 bg-slate-600"></td>
-                        <td class="border border-slate-300 bg-white"></td>
-                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
-                      </tr>
-                      <tr>
-                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">5</td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                        <td class="border border-slate-300 bg-slate-700"></td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                      </tr>
-                      <tr>
-                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">5</td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                        <td class="border border-slate-300 bg-slate-700"></td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                      </tr>
-                      <tr>
-                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">1</td>
-                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
-                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
-                        <td class="border border-slate-300 bg-slate-600"></td>
-                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
-                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
-                      </tr>
-                      <tr>
-                        <td class="h-4 border-r-2 border-slate-600 bg-slate-50 pr-1 text-right text-slate-700">2</td>
-                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
-                        <td class="border border-slate-300 bg-white"></td>
-                        <td class="border border-slate-300 bg-slate-600"></td>
-                        <td class="border border-slate-300 bg-white"></td>
-                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
-                      </tr>
-                    </table>
-                  </div>
-                </div>
-
-                <!-- Diagram 5 -->
-                <div class="flex flex-col items-center">
-                  <div class="flex items-center gap-1.5 mb-1.5 self-start pl-1">
-                    <span class="text-rose-500 font-black text-base sm:text-lg">5.</span>
-                  </div>
-                  <div class="bg-white p-1 rounded-lg border border-slate-300 shadow-md inline-block select-none">
-                    <table class="border-collapse text-[9px] font-mono font-bold text-center">
-                      <tr>
-                        <td class="w-4 h-6 border-r-2 border-b-2 border-slate-600 bg-slate-50"></td>
-                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700">2</td>
-                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700"><div>3</div><div>1</div></td>
-                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700">5</td>
-                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700">3</td>
-                        <td class="w-4 h-6 border-b-2 border-slate-600 align-bottom pb-0.5 text-slate-700">2</td>
-                      </tr>
-                      <tr>
-                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">3</td>
-                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                        <td class="border border-slate-300 bg-slate-600"></td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
-                      </tr>
-                      <tr>
-                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">5</td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                        <td class="border border-slate-300 bg-slate-700"></td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                      </tr>
-                      <tr>
-                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">5</td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                        <td class="border border-slate-300 bg-slate-700"></td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                      </tr>
-                      <tr>
-                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">1</td>
-                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
-                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
-                        <td class="border border-slate-300 bg-slate-600"></td>
-                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
-                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
-                      </tr>
-                      <tr>
-                        <td class="h-4 border-r-2 border-slate-600 bg-slate-50 pr-1 text-right text-slate-700">2</td>
-                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
-                        <td class="border border-slate-300 bg-white"></td>
-                        <td class="border border-slate-300 bg-slate-600"></td>
-                        <td class="border border-slate-300 bg-white"></td>
-                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
-                      </tr>
-                    </table>
-                  </div>
-                </div>
-
-                <!-- Diagram 6 -->
-                <div class="flex flex-col items-center">
-                  <div class="flex items-center gap-1.5 mb-1.5 self-start pl-1">
-                    <span class="text-rose-500 font-black text-base sm:text-lg">6.</span>
-                  </div>
-                  <div class="bg-white p-1 rounded-lg border border-slate-300 shadow-md inline-block select-none">
-                    <table class="border-collapse text-[9px] font-mono font-bold text-center">
-                      <tr>
-                        <td class="w-4 h-6 border-r-2 border-b-2 border-slate-600 bg-slate-50"></td>
-                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700">2</td>
-                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700"><div>3</div><div>1</div></td>
-                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700">5</td>
-                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700">3</td>
-                        <td class="w-4 h-6 border-b-2 border-slate-600 align-bottom pb-0.5 text-slate-700">2</td>
-                      </tr>
-                      <tr>
-                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">3</td>
-                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                        <td class="border border-slate-300 bg-slate-600"></td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
-                      </tr>
-                      <tr>
-                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">5</td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                        <td class="border border-slate-300 bg-slate-700"></td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                      </tr>
-                      <tr>
-                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">5</td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                        <td class="border border-slate-300 bg-slate-700"></td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                      </tr>
-                      <tr>
-                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">1</td>
-                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
-                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
-                        <td class="border border-slate-300 bg-slate-600"></td>
-                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
-                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
-                      </tr>
-                      <tr>
-                        <td class="h-4 border-r-2 border-slate-600 bg-slate-50 pr-1 text-right text-slate-700">2</td>
-                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
-                        <td class="border border-slate-300 bg-slate-500"></td>
-                        <td class="border border-slate-300 bg-slate-600"></td>
-                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
-                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
-                      </tr>
-                    </table>
-                  </div>
-                  <span class="mt-2 text-xs font-black text-amber-400 tracking-wide" data-i18n="tut_umbrella_done">우산 완성!</span>
-                </div>
-
-              </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
-              <!-- Step 1 -->
-              <div class="bg-[#0f1320] border border-slate-700/70 rounded-xl p-3">
-                <span class="inline-block px-2 py-0.5 rounded bg-rose-950 text-rose-300 font-black text-[11px] mb-1">1단계</span>
-                <p class="font-bold text-slate-100 text-xs" data-i18n="tut_s1_t">가장 큰 숫자 라인부터 공략!</p>
-                <p class="text-[11px] text-slate-400 mt-1 leading-normal" data-i18n="tut_s1_d" data-i18n-mode="block">5×5 퍼즐에서 '5'로 표시된 가로 2·3번째 줄, 세로 3번째 줄은 5칸 전체를 빈틈없이 다 색칠합니다.</p>
-              </div>
-
-              <!-- Step 2 -->
-              <div class="bg-[#0f1320] border border-slate-700/70 rounded-xl p-3">
-                <span class="inline-block px-2 py-0.5 rounded bg-rose-950 text-rose-300 font-black text-[11px] mb-1">2단계</span>
-                <p class="font-bold text-slate-100 text-xs" data-i18n="tut_s2_t">완성된 줄의 나머지 칸에 X 표시</p>
-                <p class="text-[11px] text-slate-400 mt-1 leading-normal" data-i18n="tut_s2_d" data-i18n-mode="block">1단계를 마치면 가로 4번째 줄의 '1'이 이미 채워졌으므로 그 줄의 나머지 모든 칸에 X를 표시합니다.</p>
-              </div>
-
-              <!-- Step 3 -->
-              <div class="bg-[#0f1320] border border-slate-700/70 rounded-xl p-3">
-                <span class="inline-block px-2 py-0.5 rounded bg-rose-950 text-rose-300 font-black text-[11px] mb-1">3단계</span>
-                <p class="font-bold text-slate-100 text-xs" data-i18n="tut_s3_t">불가능한 위치 판별 후 X 표시</p>
-                <p class="text-[11px] text-slate-400 mt-1 leading-normal" data-i18n="tut_s3_d" data-i18n-mode="block">5번째 가로줄은 '2'칸 연속이어야 하는데, 가운데가 이미 칠해졌으므로 맨 앞칸과 맨 뒷칸에는 올 수 없어 X 표시합니다.</p>
-              </div>
-
-              <!-- Step 4 -->
-              <div class="bg-[#0f1320] border border-slate-700/70 rounded-xl p-3">
-                <span class="inline-block px-2 py-0.5 rounded bg-rose-950 text-rose-300 font-black text-[11px] mb-1">4단계</span>
-                <p class="font-bold text-slate-100 text-xs" data-i18n="tut_s4_t">세로줄 완성 확인 및 상단 X</p>
-                <p class="text-[11px] text-slate-400 mt-1 leading-normal" data-i18n="tut_s4_d" data-i18n-mode="block">세로 1번째, 5번째 줄의 '2'가 만족되었으므로 그 위의 빈 영역(가로 1번째 줄의 양 끝)에 X를 칩니다.</p>
-              </div>
-
-              <!-- Step 5 -->
-              <div class="bg-[#0f1320] border border-slate-700/70 rounded-xl p-3">
-                <span class="inline-block px-2 py-0.5 rounded bg-rose-950 text-rose-300 font-black text-[11px] mb-1">5단계</span>
-                <p class="font-bold text-slate-100 text-xs" data-i18n="tut_s5_t">남은 칸 수와 힌트 일치 시 색칠</p>
-                <p class="text-[11px] text-slate-400 mt-1 leading-normal" data-i18n="tut_s5_d" data-i18n-mode="block">가로 1번째 줄의 힌트는 '3'인데 빈칸이 딱 3칸만 남았으므로 가운데 3칸을 칠해 완성합니다.</p>
-              </div>
-
-              <!-- Step 6 -->
-              <div class="bg-[#0f1320] border border-slate-700/70 rounded-xl p-3">
-                <span class="inline-block px-2 py-0.5 rounded bg-rose-950 text-rose-300 font-black text-[11px] mb-1">6단계</span>
-                <p class="font-bold text-slate-100 text-xs" data-i18n="tut_s6_t">마지막 단서 적용 → '우산' 완성!</p>
-                <p class="text-[11px] text-slate-400 mt-1 leading-normal" data-i18n="tut_s6_d" data-i18n-mode="block">세로 2번째(단서 1)와 4번째(단서 3) 숫자를 대조하여 손잡이 부분을 색칠하면 예쁜 우산이 완성됩니다!</p>
-              </div>
-            </div>
-          </div>
+          <p class="text-xs text-slate-400" data-i18n="tut_steps_title">5×5 우산 퍼즐로 배우는 6단계 풀이 과정</p>
         </div>
-
-        <!-- TAB 2: PRO TIPS (교집합) -->
         <div id="tut-content-2" class="hidden space-y-4">
           <div class="bg-amber-950/40 border border-amber-600/50 rounded-xl p-4">
             <h4 class="font-black text-amber-300 text-sm flex items-center gap-2 mb-1.5">
-              <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i>
-              <span data-i18n="tut_pro_head">고난이도 문제에서 쓸 수 있는 핵심 팁!</span>
+              <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i><span data-i18n="tut_pro_head">고난이도 문제에서 쓸 수 있는 핵심 팁!</span>
             </h4>
             <p class="text-xs text-slate-300" data-i18n="tut_pro_sub" data-i18n-mode="block">
-              난이도가 높아질수록 퍼즐의 칸 수가 많아져 단번에 끝까지 채워지는 줄이 줄어듭니다. 이 때는 양 끝에서부터 최대한 밀어붙였을 때 겹치는 칸(교집합)을 찾아 먼저 칠해야 합니다!
-            </p>
-          </div>
-
-          <!-- Visual Intersection Diagram -->
-          <div class="bg-[#0d0f17] border border-slate-700 rounded-xl p-4">
-            <div class="flex items-center justify-between pb-2 mb-3 border-b border-slate-800">
-              <span class="font-bold text-indigo-300 text-xs" data-i18n="tut_diagram_title">📌 10칸 줄에서 단서가 [1, 4, 2] 일 때 분석 예시</span>
-              <span class="px-2 py-0.5 bg-slate-800 text-[10px] text-slate-400 rounded">10×10 ~ 20×20 응용</span>
-            </div>
-
-            <div class="flex flex-col sm:flex-row items-center justify-around gap-4 py-2 font-mono text-[11px]">
-              
-              <!-- Column 1 -->
-              <div class="flex flex-col items-center">
-                <span class="text-slate-400 mb-1 text-[11px] font-sans" data-i18n="tut_align_top">맨 위부터 밀어붙일 때</span>
-                <div class="text-indigo-400 font-bold mb-1">1 · 4 · 2</div>
-                <div class="border-2 border-slate-600 bg-white rounded flex flex-col w-7 overflow-hidden text-center">
-                  <div class="h-5 bg-slate-900 text-white font-bold flex items-center justify-center">1</div>
-                  <div class="h-5 text-rose-500 font-bold flex items-center justify-center border-t border-slate-300">X</div>
-                  <div class="h-5 bg-slate-900 text-white font-bold flex items-center justify-center border-t border-slate-300">4</div>
-                  <div class="h-5 bg-slate-900 text-white font-bold flex items-center justify-center border-t border-slate-300">4</div>
-                  <div class="h-5 bg-slate-900 text-white font-bold flex items-center justify-center border-t border-slate-300">4</div>
-                  <div class="h-5 bg-slate-900 text-white font-bold flex items-center justify-center border-t border-slate-300">4</div>
-                  <div class="h-5 text-rose-500 font-bold flex items-center justify-center border-t border-slate-300">X</div>
-                  <div class="h-5 bg-slate-900 text-white font-bold flex items-center justify-center border-t border-slate-300">2</div>
-                  <div class="h-5 bg-slate-900 text-white font-bold flex items-center justify-center border-t border-slate-300">2</div>
-                  <div class="h-5 bg-slate-100 border-t border-slate-300"></div>
-                </div>
-              </div>
-
-              <!-- Overlap Sign -->
-              <div class="text-2xl text-amber-400 font-bold flex flex-col items-center">
-                <span>∩</span>
-                <span class="text-[10px] text-slate-400 font-sans" data-i18n="tut_overlap_label">교집합</span>
-              </div>
-
-              <!-- Column 2 -->
-              <div class="flex flex-col items-center">
-                <span class="text-slate-400 mb-1 text-[11px] font-sans" data-i18n="tut_align_bottom">맨 아래부터 밀어붙일 때</span>
-                <div class="text-indigo-400 font-bold mb-1">1 · 4 · 2</div>
-                <div class="border-2 border-slate-600 bg-white rounded flex flex-col w-7 overflow-hidden text-center">
-                  <div class="h-5 bg-slate-100"></div>
-                  <div class="h-5 bg-slate-900 text-white font-bold flex items-center justify-center border-t border-slate-300">1</div>
-                  <div class="h-5 text-rose-500 font-bold flex items-center justify-center border-t border-slate-300">X</div>
-                  <div class="h-5 bg-slate-900 text-white font-bold flex items-center justify-center border-t border-slate-300">4</div>
-                  <div class="h-5 bg-slate-900 text-white font-bold flex items-center justify-center border-t border-slate-300">4</div>
-                  <div class="h-5 bg-slate-900 text-white font-bold flex items-center justify-center border-t border-slate-300">4</div>
-                  <div class="h-5 bg-slate-900 text-white font-bold flex items-center justify-center border-t border-slate-300">4</div>
-                  <div class="h-5 text-rose-500 font-bold flex items-center justify-center border-t border-slate-300">X</div>
-                  <div class="h-5 bg-slate-900 text-white font-bold flex items-center justify-center border-t border-slate-300">2</div>
-                  <div class="h-5 bg-slate-900 text-white font-bold flex items-center justify-center border-t border-slate-300">2</div>
-                </div>
-              </div>
-
-              <!-- Arrow -->
-              <div class="text-2xl text-emerald-400 font-bold">➔</div>
-
-              <!-- Column 3 -->
-              <div class="flex flex-col items-center">
-                <span class="text-emerald-400 font-bold mb-1 text-[11px] font-sans" data-i18n="tut_result_overlap">★ 반드시 겹치는 칸 확정!</span>
-                <div class="text-emerald-400 font-bold mb-1" data-i18n="tut_must_fill">색칠 확정 칸</div>
-                <div class="border-2 border-emerald-500 bg-white rounded flex flex-col w-7 overflow-hidden text-center shadow-lg shadow-emerald-950/60 ring-2 ring-emerald-500/40">
-                  <div class="h-5 bg-slate-100"></div>
-                  <div class="h-5 bg-slate-100 border-t border-slate-300"></div>
-                  <div class="h-5 bg-slate-100 border-t border-slate-300"></div>
-                  <div class="h-5 bg-emerald-600 text-white font-black flex items-center justify-center border-t border-slate-300">●</div>
-                  <div class="h-5 bg-emerald-600 text-white font-black flex items-center justify-center border-t border-slate-300">●</div>
-                  <div class="h-5 bg-emerald-600 text-white font-black flex items-center justify-center border-t border-slate-300">●</div>
-                  <div class="h-5 bg-slate-100 border-t border-slate-300"></div>
-                  <div class="h-5 bg-slate-100 border-t border-slate-300"></div>
-                  <div class="h-5 bg-emerald-600 text-white font-black flex items-center justify-center border-t border-slate-300">●</div>
-                  <div class="h-5 bg-slate-100 border-t border-slate-300"></div>
-                </div>
-              </div>
-
-            </div>
-
-            <p class="text-slate-400 text-[11px] mt-3 leading-relaxed" data-i18n="tut_pro_explanation" data-i18n-mode="block">
-              위 예시처럼 '맨 위에서 채웠을 때'와 '맨 아래에서 채웠을 때' 같은 숫자 그룹이 중복으로 차지하는 칸(● 표시된 총 4칸)은 어떤 상황에서도 무조건 칠해져야 하는 절대적인 칸입니다. 이 칸들을 먼저 칠하고 나면 직교하는 다른 줄들의 강력한 힌트가 됩니다!
+              양 끝에서부터 최대한 밀어붙였을 때 겹치는 칸(교집합)을 찾아 먼저 칠해야 합니다!
             </p>
           </div>
         </div>
-
       </div>
-
-      <!-- Modal Footer -->
       <div class="p-3 bg-[#0d0f17] border-t border-slate-800 flex items-center justify-between">
         <span class="text-[11px] text-slate-500 pl-2">Kwangsan Middle School Logic Lab</span>
         <button onclick="closeTutorialModal()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl shadow transition">
           <span data-i18n="btn_confirm">확인했습니다</span>
         </button>
       </div>
-
     </div>
   </div>
 
-  <!-- ================= SUCCESS MODAL ================= -->
   <div id="success-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="bg-[#141824] rounded-2xl max-w-sm w-full p-6 text-center space-y-4 shadow-2xl border border-emerald-500/50 animate-in fade-in zoom-in-95 duration-200">
-      
+    <div class="bg-[#141824] rounded-2xl max-w-sm w-full p-6 text-center space-y-4 shadow-2xl border border-emerald-500/50">
       <div class="w-16 h-16 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center text-3xl mx-auto">
         <i class="fa-solid fa-trophy"></i>
       </div>
-
       <div class="space-y-1">
         <h3 class="text-xl font-extrabold text-white" data-i18n="modal_success_title">정답입니다! 완벽해요!</h3>
-        <p class="text-xs text-slate-300" id="success-stage-name">스테이지를 멋지게 클리어했습니다.</p>
+        <p class="text-xs text-slate-300" id="success-stage-name"></p>
         <p class="text-sm font-bold text-amber-400 pt-1" id="success-record-text"></p>
       </div>
-
       <div class="pt-2 flex flex-col gap-2">
         <button onclick="handleNextStageFromModal()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-sky-500 text-white font-extrabold text-xs shadow-md transition active:scale-95">
           <span data-i18n="modal_next_btn">다음 스테이지 도전</span>
@@ -1006,402 +459,70 @@
           <span data-i18n="modal_close_btn">퍼즐 계속 보기</span>
         </button>
       </div>
-
     </div>
   </div>
 
-  <!-- ================= TOAST NOTIFICATION ================= -->
   <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-slate-900/95 border border-slate-700 text-white px-4 py-2.5 rounded-xl shadow-2xl text-xs font-bold transition-all duration-300 opacity-0 pointer-events-none transform translate-y-3 flex items-center gap-2">
     <i id="toast-icon" class="fa-solid fa-circle-info text-indigo-400"></i>
     <span id="toast-message">알림</span>
   </div>
 
-  <!-- ================= JAVASCRIPT LOGIC ================= -->
   <script>
-    /* ========================================================
-       0. GOOGLE APPS SCRIPT WEB APP URL (JSONP + CORS 지원)
-       ======================================================== */
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxG8bsk_L_p303M1W5laKqWl9-2KFyK062IR383wOEcnv1-KEyWM6TvIDrIEh3fMo0F-A/exec";
 
-    /* ========================================================
-       1. GLOBAL STATE & STAGES (TOTAL 12 STAGES)
-       ======================================================== */
     let currentStudent = { id: "", name: "" };
-    let currentLanguage = 'ko'; // 'ko' | 'en' | 'zh' | 'ru'
+    let currentLanguage = 'ko';
     let currentStageIndex = 0;
-    let toolMode = 'fill'; // 'fill' | 'mark'
+    let toolMode = 'fill';
     let isMouseDown = false;
-    let dragAction = null; // 'fill' | 'mark' | 'empty'
-    let userGrid = []; // 2D Array
+    let dragAction = null;
+    let userGrid = [];
     let clearedStages = new Set();
-
-    // Timer Variables
     let stageTimerInterval = null;
     let stageStartTime = 0;
     let stageElapsedSec = 0;
 
-    /* Multilingual Dictionary: Korean Base + Sub-languages (EN, ZH, RU) */
     const translations = {
-      badge_change: {
-        ko: "[학생 변경]",
-        en: "[Change Student]",
-        zh: "[更换学生]",
-        ru: "[Сменить]"
-      },
-      btn_ranking: {
-        ko: "순위표",
-        en: "Leaderboard",
-        zh: "排行榜",
-        ru: "Таблица лидеров"
-      },
-      btn_tutorial: {
-        ko: "튜토리얼",
-        en: "Tutorial",
-        zh: "教程",
-        ru: "Обучение"
-      },
-      tut_tab_basic: {
-        ko: "기본 규칙 & 단계별 풀이",
-        en: "Basic Rules & 6-Step Guide",
-        zh: "基础规则与6步解析",
-        ru: "Основные правила и шаги"
-      },
-      tut_tab_pro: {
-        ko: "고난이도 필수 팁 (교집합)",
-        en: "Pro Solving Tips (Overlap)",
-        zh: "高阶通关技巧 (重叠交集)",
-        ru: "Советы для сложных уровней"
-      },
-      tut_basic_header: {
-        ko: "기본 규칙 3가지",
-        en: "3 Fundamental Rules",
-        zh: "3项基本规则",
-        ru: "3 базовых правила"
-      },
-      tut_b1: {
-        ko: "1) 왼쪽과 위쪽 숫자는 연속해서 칠해져야 할 칸의 수",
-        en: "1) Numbers show the count of consecutive filled cells",
-        zh: "1) 左侧和上方的数字表示必须连续涂黑的格数",
-        ru: "1) Числа указывают количество непрерывно закрашенных клеток"
-      },
-      tut_b1_sub: {
-        ko: "를 의미합니다.",
-        en: ".",
-        zh: "。",
-        ru: "."
-      },
-      tut_b2: {
-        ko: "2) 여러 개의 숫자가 있을 때",
-        en: "2) When there are multiple numbers",
-        zh: "2) 当一行有多个数字时",
-        ru: "2) При наличии нескольких чисел"
-      },
-      tut_b2_sub: {
-        ko: ": 숫자와 숫자 사이는 반드시 최소 한 칸 이상을 띄우고 색칠합니다.",
-        en: ": There must be at least one empty tile between groups.",
-        zh: ": 组与组之间必须至少间隔一个空格。",
-        ru: ": между группами должен оставаться минимум один пробел."
-      },
-      tut_b3: {
-        ko: "3) 칠할 수 없는 빈칸",
-        en: "3) Definitely empty cells",
-        zh: "3) 确定不涂色的空格",
-        ru: "3) Точно пустые клетки"
-      },
-      tut_b3_sub: {
-        ko: "에는 X표시를 해두면 남은 칸을 쉽게 유추할 수 있습니다.",
-        en: ": Mark with an X to easily deduce the remaining cells.",
-        zh: "：打上 X 标记可以更轻松推导出剩余的格子。",
-        ru: ": помечайте крестиком (X) для облегчения поиска."
-      },
-      tut_steps_title: {
-        ko: "5×5 우산 퍼즐로 배우는 6단계 풀이 과정",
-        en: "6-Step Solving Process (5×5 Umbrella Puzzle)",
-        zh: "通过 5×5 雨伞拼图学习的 6 步解题法",
-        ru: "6 шагов решения на примере зонтика 5×5"
-      },
-      tut_umbrella_done: {
-        ko: "우산 완성!",
-        en: "Umbrella complete!",
-        zh: "雨伞完成！",
-        ru: "Зонтик готов!"
-      },
-      tut_s1_t: {
-        ko: "가장 큰 숫자 라인부터 공략!",
-        en: "Start with the largest numbers!",
-        zh: "从最大的数字行/列开始入手！",
-        ru: "Начните с самых больших чисел!"
-      },
-      tut_s1_d: {
-        ko: "5×5 퍼즐에서 '5'로 표시된 가로 2·3번째 줄, 세로 3번째 줄은 5칸 전체를 빈틈없이 다 색칠합니다.",
-        en: "In a 5×5 puzzle, rows/cols marked '5' are completely filled across all 5 cells.",
-        zh: "在 5×5 拼图中，标有 '5' 的行与列将全部 5 格涂满，毫无悬念。",
-        ru: "В пазле 5×5 линии с числом 5 закрашиваются целиком."
-      },
-      tut_s2_t: {
-        ko: "완성된 줄의 나머지 칸에 X 표시",
-        en: "Mark completed lines with X",
-        zh: "在已满足条件的剩余格子打 X",
-        ru: "Ставьте X в законченных линиях"
-      },
-      tut_s2_d: {
-        ko: "1단계를 마치면 가로 4번째 줄의 '1'이 이미 채워졌으므로 그 줄의 나머지 모든 칸에 X를 표시합니다.",
-        en: "Once row 4's clue '1' is satisfied by step 1, mark all its other cells with X.",
-        zh: "第1步完成后，第4行的 '1' 已经就位，故该行其余所有空格都标记为 X。",
-        ru: "Если число 1 в 4-й строке заполнено, остальные клетки отмечаем X."
-      },
-      tut_s3_t: {
-        ko: "불가능한 위치 판별 후 X 표시",
-        en: "Identify impossible spots and mark X",
-        zh: "排除不可能的位置并打 X",
-        ru: "Отмечайте X невозможные места"
-      },
-      tut_s3_d: {
-        ko: "5번째 가로줄은 '2'칸 연속이어야 하는데, 가운데가 이미 칠해졌으므로 맨 앞칸과 맨 뒷칸에는 올 수 없어 X 표시합니다.",
-        en: "Row 5 needs 2 consecutive cells with center filled, so edges cannot be filled.",
-        zh: "第5行需要连续 2 格且中心已涂色，因此两侧最外边缘绝不可能涂色，直接打 X。",
-        ru: "5-я строка требует 2 клетки; зная центр, края точно отмечаем X."
-      },
-      tut_s4_t: {
-        ko: "세로줄 완성 확인 및 상단 X",
-        en: "Verify columns and mark top X",
-        zh: "检查列条件并将顶部打 X",
-        ru: "Проверка колонок и X сверху"
-      },
-      tut_s4_d: {
-        ko: "세로 1번째, 5번째 줄의 '2'가 만족되었으므로 그 위의 빈 영역(가로 1번째 줄의 양 끝)에 X를 칩니다.",
-        en: "Columns 1 and 5 have their '2's fulfilled, so mark X on the empty top corners.",
-        zh: "第1列和第5列的 '2' 已满足，将上方的第一行两侧空白格打 X。",
-        ru: "Столбцы 1 и 5 выполнены, отмечаем верхние углы крестиком."
-      },
-      tut_s5_t: {
-        ko: "남은 칸 수와 힌트 일치 시 색칠",
-        en: "Fill when remaining cells equal clue",
-        zh: "剩余空格恰好等于数字时直接涂色",
-        ru: "Закрасьте оставшиеся клетки"
-      },
-      tut_s5_d: {
-        ko: "가로 1번째 줄의 힌트는 '3'인데 빈칸이 딱 3칸만 남았으므로 가운데 3칸을 칠해 완성합니다.",
-        en: "Row 1 clue is '3' and exactly 3 cells remain, so fill them all.",
-        zh: "第1行线索为 '3'，此时正好只剩下 3 个空格，全部填涂即可！",
-        ru: "В 1-й строке подсказка 3 и осталось ровно 3 клетки — закрашиваем."
-      },
-      tut_s6_t: {
-        ko: "마지막 단서 적용 → '우산' 완성!",
-        en: "Final clues applied → Umbrella complete!",
-        zh: "应用最后线索 → 雨伞顺利完成！",
-        ru: "Финал → Зонтик готов!"
-      },
-      tut_s6_d: {
-        ko: "세로 2번째(단서 1)와 4번째(단서 3) 숫자를 대조하여 손잡이 부분을 색칠하면 예쁜 우산이 완성됩니다!",
-        en: "Cross-reference col 2 (clue 1) and col 4 (clue 3) to fill the handle and complete the umbrella!",
-        zh: "核对第2列(线索1)与第4列(线索3)，涂黑手柄部分，雨伞图案大功告成！",
-        ru: "Сверьте столбцы 2 и 4 для ручки — и зонтик готов!"
-      },
-      tut_pro_head: {
-        ko: "고난이도 문제에서 쓸 수 있는 핵심 팁!",
-        en: "Essential Pro Tip for Hard Puzzles!",
-        zh: "高难度关卡必学核心秘诀！",
-        ru: "Главный секрет сложных уровней!"
-      },
-      tut_pro_sub: {
-        ko: "난이도가 높아질수록 퍼즐의 칸 수가 많아져 단번에 끝까지 채워지는 줄이 줄어듭니다. 이 때는 양 끝에서부터 최대한 밀어붙였을 때 겹치는 칸(교집합)을 찾아 먼저 칠해야 합니다!",
-        en: "On larger grids, find guaranteed cells by overlapping lines pushed to both extreme ends!",
-        zh: "网格越大，能直接全填的行越少。此时先从两端分别向内推挤，找出重叠交集的必填格！",
-        ru: "На больших сетках сдвигайте блоки к обо임 краям и находите их гарантированное пересечение!"
-      },
-      tut_diagram_title: {
-        ko: "📌 10칸 줄에서 단서가 [1, 4, 2] 일 때 분석 예시",
-        en: "📌 Analysis Example: 10-cell line with clues [1, 4, 2]",
-        zh: "📌 10格线索为 [1, 4, 2] 时的推导示例",
-        ru: "📌 Пример: линия из 10 клеток с подсказкой [1, 4, 2]"
-      },
-      tut_align_top: {
-        ko: "맨 위부터 밀어붙일 때",
-        en: "Pushed to the top",
-        zh: "从最顶端向内排布",
-        ru: "Прижато к верхнему краю"
-      },
-      tut_align_bottom: {
-        ko: "맨 아래부터 밀어붙일 때",
-        en: "Pushed to the bottom",
-        zh: "从最底端向内排布",
-        ru: "Прижато к нижнему краю"
-      },
-      tut_overlap_label: {
-        ko: "교집합",
-        en: "Intersection",
-        zh: "重叠交集",
-        ru: "Пересечение"
-      },
-      tut_result_overlap: {
-        ko: "★ 반드시 겹치는 칸 확정!",
-        en: "★ Overlapped Cells Confirmed!",
-        zh: "★ 必然重叠格子锁定！",
-        ru: "★ Гарантированные клетки!"
-      },
-      tut_must_fill: {
-        ko: "색칠 확정 칸",
-        en: "Guaranteed Fills",
-        zh: "确定涂色格子",
-        ru: "Точно закрашивать"
-      },
-      tut_pro_explanation: {
-        ko: "위 예시처럼 '맨 위에서 채웠을 때'와 '맨 아래에서 채웠을 때' 같은 숫자 그룹이 중복으로 차지하는 칸(● 표시된 총 4칸)은 어떤 상황에서도 무조건 칠해져야 하는 절대적인 칸입니다. 이 칸들을 먼저 칠하고 나면 직교하는 다른 줄들의 강력한 힌트가 됩니다!",
-        en: "Cells that overlap regardless of push direction MUST be filled.",
-        zh: "无论从顶端还是底端排布，同一数字块重叠占用的格子绝对必涂！",
-        ru: "Клетки, в которых блоки перекрываются, гарантированно закрашиваются."
-      },
-      login_title: {
-        ko: "관산중학교 학생 확인",
-        en: "Student Verification",
-        zh: "冠山中学学生认证",
-        ru: "Вход для учащихся"
-      },
-      login_desc: {
-        ko: "학번과 이름을 입력하고 퍼즐을 시작하세요.",
-        en: "Enter your Student ID and Name to begin.",
-        zh: "请输入学号与姓名后开始游戏。",
-        ru: "Введите номер и имя для входа."
-      },
-      login_stuid_label: {
-        ko: "학번 (예: 20315)",
-        en: "Student ID (e.g. 20315)",
-        zh: "学号 (例如: 20315)",
-        ru: "Номер билета (напр. 20315)"
-      },
-      login_name_label: {
-        ko: "이름",
-        en: "Name",
-        zh: "姓名",
-        ru: "Имя"
-      },
-      login_btn: {
-        ko: "퍼즐 게임 시작하기",
-        en: "Start Puzzle",
-        zh: "开始解题",
-        ru: "Начать игру"
-      },
-      nav_stage_select: {
-        ko: "스테이지 선택 및 달성 현황",
-        en: "Stage Selection & Progress",
-        zh: "关卡选择与通关进度",
-        ru: "Выбор уровня и прогресс"
-      },
-      diff_novice: {
-        ko: "초급 (5×5)",
-        en: "Novice (5×5)",
-        zh: "初级 (5×5)",
-        ru: "Новичок (5×5)"
-      },
-      diff_medium: {
-        ko: "중급 (10×10)",
-        en: "Medium (10×10)",
-        zh: "中级 (10×10)",
-        ru: "Средний (10×10)"
-      },
-      diff_hard: {
-        ko: "상급 (15×15)",
-        en: "Hard (15×15)",
-        zh: "高级 (15×15)",
-        ru: "Сложный (15×15)"
-      },
-      diff_expert: {
-        ko: "고급 (20×20)",
-        en: "Expert (20×20)",
-        zh: "专家 (20×20)",
-        ru: "Эксперт (20×20)"
-      },
-      mode_fill: {
-        ko: "칠하기",
-        en: "Fill",
-        zh: "涂黑",
-        ru: "Закрасить"
-      },
-      mode_mark: {
-        ko: "X 표시",
-        en: "Mark X",
-        zh: "标X",
-        ru: "Крестик"
-      },
-      btn_reset: {
-        ko: "초기화",
-        en: "Reset",
-        zh: "重置",
-        ru: "Сброс"
-      },
-      tip_pc: {
-        ko: "PC: 좌클릭 = 칠하기 | 우클릭 = X표시",
-        en: "PC: Left click = Fill | Right click = X",
-        zh: "PC: 左键 = 涂色 | 右键 = X标记",
-        ru: "ПК: ЛКМ = Закрасить | ПКМ = X"
-      },
-      tip_mobile: {
-        ko: "모바일: 상단 모드 선택 후 탭 또는 드래그",
-        en: "Mobile: Select mode above & tap/drag",
-        zh: "移动端: 选择上方模式后点击或拖动",
-        ru: "Мобильный: выберите режим и нажимайте"
-      },
-      btn_check: {
-        ko: "정답 확인 및 기록 등록",
-        en: "Check Answer & Register",
-        zh: "核对答案并提交",
-        ru: "Проверить и сохранить"
-      },
-      ranking_title: {
-        ko: "실시간 랭킹 순위표",
-        en: "Live Leaderboard",
-        zh: "实时排行榜",
-        ru: "Таблица рекордов"
-      },
-      ranking_top40: {
-        ko: "상위 40위",
-        en: "TOP 40",
-        zh: "前 40 名",
-        ru: "ТОП 40"
-      },
-      ranking_notice: {
-        ko: "* 정답 확인 시 클리어 시간이 자동으로 서버에 기록됩니다.",
-        en: "* Clear time is automatically recorded upon solving.",
-        zh: "* 确认答案时通关用时将自动记录至服务器。",
-        ru: "* Время прохождения автоматически сохраняется на сервере."
-      },
-      ranking_loading: {
-        ko: "순위표 데이터를 조회 중입니다...",
-        en: "Loading leaderboard data...",
-        zh: "正在加载排行榜数据...",
-        ru: "Загрузка таблицы лидеров..."
-      },
-      tut_title: {
-        ko: "네모로직 퍼즐 규칙",
-        en: "Nonogram Rules",
-        zh: "数织逻辑规则",
-        ru: "Правила Нонограмм"
-      },
-      btn_confirm: {
-        ko: "확인했습니다",
-        en: "Got it",
-        zh: "我知道了",
-        ru: "Понятно"
-      },
-      modal_success_title: {
-        ko: "정답입니다! 완벽해요!",
-        en: "Correct! Outstanding!",
-        zh: "完全正确！恭喜通关！",
-        ru: "Правильно! Отлично!"
-      },
-      modal_next_btn: {
-        ko: "다음 스테이지 도전",
-        en: "Next Stage",
-        zh: "挑战下一关",
-        ru: "Следующий уровень"
-      },
-      modal_close_btn: {
-        ko: "퍼즐 계속 보기",
-        en: "Keep Viewing",
-        zh: "留在当前关卡",
-        ru: "Остаться здесь"
-      }
+      badge_change: { ko: "[학생 변경]", en: "[Change Student]", zh: "[更换学生]", ru: "[Сменить]" },
+      btn_ranking: { ko: "순위표", en: "Leaderboard", zh: "排行榜", ru: "Таблица лидеров" },
+      btn_tutorial: { ko: "튜토리얼", en: "Tutorial", zh: "教程", ru: "Обучение" },
+      tut_tab_basic: { ko: "기본 규칙 & 단계별 풀이", en: "Basic Rules", zh: "基础规则", ru: "Правила" },
+      tut_tab_pro: { ko: "고난이도 필수 팁", en: "Pro Tips", zh: "高阶技巧", ru: "Советы" },
+      tut_basic_header: { ko: "기본 규칙 3가지", en: "3 Basic Rules", zh: "3项基本规则", ru: "3 правила" },
+      tut_b1: { ko: "1) 왼쪽과 위쪽 숫자는 연속해서 칠해져야 할 칸의 수", en: "Numbers show consecutive filled cells", zh: "数字代表连续格数", ru: "Числа — клетки подряд" },
+      tut_b1_sub: { ko: "를 의미합니다.", en: ".", zh: "。", ru: "." },
+      tut_b2: { ko: "2) 여러 개의 숫자가 있을 때", en: "Multiple numbers", zh: "多个数字时", ru: "Несколько чисел" },
+      tut_b2_sub: { ko: ": 최소 한 칸 이상을 띄우고 색칠합니다.", en: ": At least one gap.", zh: ": 必须留空。", ru: ": с пробелом." },
+      tut_b3: { ko: "3) 칠할 수 없는 빈칸", en: "Definitely empty cells", zh: "空白格", ru: "Пустые клетки" },
+      tut_b3_sub: { ko: "에는 X표시를 해둡니다.", en: ": Mark with X.", zh: ": 打上 X 标记。", ru: ": помечайте X." },
+      tut_steps_title: { ko: "5×5 우산 퍼즐 풀이 과정", en: "5×5 Umbrella Puzzle Guide", zh: "雨伞拼图解析", ru: "Пример зонтика" },
+      tut_pro_head: { ko: "고난이도 필수 팁!", en: "Pro Tips!", zh: "通关秘诀！", ru: "Секрет уровней!" },
+      tut_pro_sub: { ko: "양 끝에서 최대한 밀었을 때 겹치는 교집합을 먼저 칠하세요!", en: "Find guaranteed overlap cells first!", zh: "优先寻找重叠交集格！", ru: "Ищите пересечения!" },
+      login_title: { ko: "관산중학교 학생 확인", en: "Student Verification", zh: "学生认证", ru: "Вход" },
+      login_desc: { ko: "학번과 이름을 입력하고 퍼즐을 시작하세요.", en: "Enter Student ID and Name.", zh: "请输入学号与姓名。", ru: "Введите номер и имя." },
+      login_stuid_label: { ko: "학번 (예: 20315)", en: "Student ID", zh: "学号", ru: "Номер" },
+      login_name_label: { ko: "이름", en: "Name", zh: "姓名", ru: "Имя" },
+      login_btn: { ko: "퍼즐 게임 시작하기", en: "Start Puzzle", zh: "开始游戏", ru: "Начать" },
+      nav_stage_select: { ko: "스테이지 선택 및 달성 현황", en: "Stage Selection & Progress", zh: "关卡选择与进度", ru: "Выбор уровня" },
+      diff_novice: { ko: "초급 (5×5)", en: "Novice (5×5)", zh: "初级 (5×5)", ru: "Новичок (5×5)" },
+      diff_medium: { ko: "중급 (10×10)", en: "Medium (10×10)", zh: "中级 (10×10)", ru: "Средний (10×10)" },
+      diff_hard: { ko: "상급 (15×15)", en: "Hard (15×15)", zh: "高级 (15×15)", ru: "Сложный (15×15)" },
+      diff_expert: { ko: "고급 (20×20)", en: "Expert (20×20)", zh: "专家 (20×20)", ru: "Эксперт (20×20)" },
+      mode_fill: { ko: "칠하기", en: "Fill", zh: "涂黑", ru: "Закрасить" },
+      mode_mark: { ko: "X 표시", en: "Mark X", zh: "标X", ru: "Крестик" },
+      btn_reset: { ko: "초기화", en: "Reset", zh: "重置", ru: "Сброс" },
+      tip_pc: { ko: "PC: 좌클릭 = 칠하기 | 우클릭 = X표시", en: "PC: Left = Fill | Right = X", zh: "PC: 左键=涂色 | 右键=X", ru: "ПК: ЛКМ=Закрасить | ПКМ=X" },
+      tip_mobile: { ko: "모바일: 상단 모드 선택 후 탭/드래그", en: "Mobile: Select mode & tap", zh: "移动端: 选模式后点击", ru: "Выбирайте режим" },
+      btn_check: { ko: "정답 확인 및 기록 등록", en: "Check Answer & Submit", zh: "核对答案并提交", ru: "Проверить ответ" },
+      ranking_title: { ko: "실시간 랭킹 순위표", en: "Live Leaderboard", zh: "实时排行榜", ru: "Таблица рекордов" },
+      ranking_top40: { ko: "상위 40위", en: "TOP 40", zh: "前 40 名", ru: "ТОП 40" },
+      ranking_notice: { ko: "* 정답 확인 시 클리어 시간이 자동으로 서버에 기록됩니다.", en: "* Clear time is automatically recorded.", zh: "* 通关用时自动记录。", ru: "* Время сохраняется." },
+      ranking_loading: { ko: "순위표 데이터를 조회 중입니다...", en: "Loading leaderboard...", zh: "正在加载数据...", ru: "Загрузка..." },
+      tut_title: { ko: "네모로직 퍼즐 규칙", en: "Nonogram Rules", zh: "数织规则", ru: "Правила" },
+      btn_confirm: { ko: "확인했습니다", en: "Got it", zh: "我知道了", ru: "Понятно" },
+      modal_success_title: { ko: "정답입니다! 완벽해요!", en: "Correct! Outstanding!", zh: "完全正确！", ru: "Правильно!" },
+      modal_next_btn: { ko: "다음 스테이지 도전", en: "Next Stage", zh: "下一关", ru: "Следующий" },
+      modal_close_btn: { ko: "퍼즐 계속 보기", en: "Keep Viewing", zh: "继续查看", ru: "Остаться" }
     };
 
     /* 12 STAGES CONFIGURATION */
@@ -1450,20 +571,20 @@
       /* --- 중급 (10x10, 3 Questions) --- */
       {
         id: 4,
-        title: { ko: "닻 (Anchor)", en: "Anchor", zh: "船锚", ru: "Якорь" },
+        title: { ko: "고래", en: "Whale", zh: "鲸鱼", ru: "Кит" },
         difficulty: "medium",
         size: 10,
         solution: [
-          [0, 0, 0, 1, 1, 1, 1, 0, 0, 0],
-          [0, 0, 0, 1, 0, 0, 1, 0, 0, 0],
-          [0, 0, 0, 1, 1, 1, 1, 0, 0, 0],
+          [0, 0, 0, 0, 1, 0, 0, 0, 1, 0],
+          [0, 0, 0, 1, 0, 1, 0, 1, 0, 1],
+          [0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
           [0, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-          [0, 0, 0, 0, 1, 1, 0, 0, 0, 0],
-          [0, 0, 0, 0, 1, 1, 0, 0, 0, 0],
-          [1, 0, 0, 0, 1, 1, 0, 0, 0, 1],
-          [1, 1, 0, 0, 1, 1, 0, 0, 1, 1],
-          [0, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-          [0, 0, 1, 1, 1, 1, 1, 1, 0, 0]
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+          [1, 1, 1, 1, 1, 1, 0, 1, 1, 1],
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 0]
         ]
       },
       {
@@ -1486,91 +607,91 @@
       },
       {
         id: 6,
-        title: { ko: "아늑한 집", en: "Cozy House", zh: "温馨小屋", ru: "Домик" },
+        title: { ko: "오리", en: "Duck", zh: "鸭子", ru: "Утка" },
         difficulty: "medium",
         size: 10,
         solution: [
-          [0, 0, 0, 0, 1, 1, 0, 0, 0, 0],
-          [0, 0, 0, 1, 1, 1, 1, 0, 0, 0],
-          [0, 0, 1, 1, 1, 1, 1, 1, 0, 0],
-          [0, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-          [0, 1, 0, 0, 0, 0, 0, 0, 1, 0],
-          [0, 1, 0, 1, 1, 0, 1, 0, 1, 0],
-          [0, 1, 0, 1, 1, 0, 1, 0, 1, 0],
-          [0, 1, 0, 1, 1, 0, 1, 0, 1, 0],
-          [0, 1, 1, 1, 1, 1, 1, 1, 1, 0]
+          [0, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+          [0, 1, 0, 0, 0, 0, 1, 0, 0, 0],
+          [1, 1, 0, 1, 0, 0, 1, 0, 0, 0],
+          [1, 1, 0, 0, 0, 0, 1, 0, 1, 1],
+          [0, 1, 0, 0, 0, 0, 1, 1, 1, 1],
+          [0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+          [1, 0, 0, 1, 0, 0, 0, 1, 0, 1],
+          [1, 0, 0, 1, 1, 1, 1, 0, 0, 1],
+          [1, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+          [0, 1, 1, 1, 1, 1, 1, 1, 0, 0]
         ]
       },
 
       /* --- 상급 (15x15, 3 Questions) --- */
       {
         id: 7,
-        title: { ko: "고양이", en: "Cat", zh: "猫咪", ru: "Кошка" },
+        title: { ko: "발자국", en: "Footprint", zh: "脚印", ru: "След" },
         difficulty: "hard",
         size: 15,
         solution: [
-          [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
-          [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0],
-          [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
-          [1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0],
-          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-          [0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0],
-          [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
-          [0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0],
-          [0, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0],
-          [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
-          [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
-          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-          [1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1],
-          [0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1],
-          [0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0]
+          [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 1],
+          [0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+          [0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0],
+          [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1],
+          [0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1],
+          [1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
+          [1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0],
+          [0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0],
+          [0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0],
+          [1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0],
+          [1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+          [1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+          [1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         ]
       },
       {
         id: 8,
-        title: { ko: "용사의 검", en: "Sword", zh: "勇者之剑", ru: "Меч героя" },
+        title: { ko: "고양이", en: "Cat", zh: "猫咪", ru: "Кошка" },
         difficulty: "hard",
         size: 15,
         solution: [
-          [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
-          [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-          [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
-          [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0]
+          [0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+          [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+          [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+          [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+          [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0],
+          [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+          [0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1],
+          [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1],
+          [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0],
+          [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+          [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+          [0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+          [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0]
         ]
       },
       {
         id: 9,
-        title: { ko: "튤립 꽃", en: "Tulip Flower", zh: "郁金香", ru: "Тюльпан" },
+        title: { ko: "악어", en: "Crocodile", zh: "鳄鱼", ru: "Крокодил" },
         difficulty: "hard",
         size: 15,
         solution: [
-          [0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0],
-          [0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0],
-          [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-          [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-          [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-          [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
-          [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
-          [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0],
-          [0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0],
-          [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-          [0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0],
-          [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0]
+          [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [1, 0, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0],
+          [1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 1],
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1],
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+          [0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+          [0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1],
+          [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1],
+          [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1],
+          [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0],
+          [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1],
+          [0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1],
+          [0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1],
+          [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+          [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0]
         ]
       },
 
@@ -1605,35 +726,35 @@
       },
       {
         id: 11,
-        title: { ko: "중세 성", en: "Castle", zh: "古老城堡", ru: "Средневековый замок" },
+        title: { ko: "눈오는 밤 강아지", en: "Dog on a Snowy Night", zh: "雪夜小狗", ru: "Щенок в снежную ночь" },
         difficulty: "expert",
         size: 20,
         solution: [
-          [1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0],
-          [1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0],
-          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-          [1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0],
-          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-          [0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0],
-          [0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0],
-          [0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0],
-          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-          [1, 0, 0, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 1, 0],
-          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-          [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
-          [0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0],
-          [0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0],
-          [0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0],
-          [0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0],
-          [0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0],
-          [1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0],
-          [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0]
+          [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+          [1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1],
+          [1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1],
+          [1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1],
+          [1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+          [1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1],
+          [1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+          [1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0],
+          [1, 1, 0, 1, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1],
+          [1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+          [1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+          [0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0],
+          [0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0],
+          [0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 0],
+          [0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0],
+          [0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0],
+          [0, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1],
+          [0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1],
+          [0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+          [0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0]
         ]
       },
       {
         id: 12,
-        title: { ko: "우주", en: "Space Universe", zh: "浩瀚宇宙", ru: "Космос" },
+        title: { ko: "우주", en: "Space Universe", zh: "浩瀚宇宙", ru: "Космо스" },
         difficulty: "expert",
         size: 20,
         fixedRowClues: [
@@ -1773,7 +894,6 @@
           </div>`;
       }
 
-      // 전략 1: JSONP 호출 (깃허브 정적 호스팅 CORS 차단 회피 1순위)
       const callbackName = 'gasRankingCallback_' + Math.floor(Math.random() * 1000000);
       window[callbackName] = function(rawResponse) {
         window[callbackName] = null;
@@ -1785,17 +905,14 @@
       script.src = `${GAS_API_URL}?stageId=${stageId}&callback=${callbackName}&_t=${cacheBuster}`;
       script.async = true;
 
-      // JSONP 실패 시 fetch 시도 (혹은 그 반대)
       script.onerror = function() {
         if (script && script.parentNode) script.parentNode.removeChild(script);
-        // JSONP 실패 시 일반 fetch 시도
         fetch(`${GAS_API_URL}?stageId=${stageId}&_t=${cacheBuster}`, { redirect: 'follow' })
           .then(res => res.json())
           .then(data => handleSuccess(data))
           .catch(e => handleFail(e));
       };
 
-      // 타임아웃 4초 설정: 응답 없으면 fetch 시도
       setTimeout(() => {
         if (!hasHandled) {
           fetch(`${GAS_API_URL}?stageId=${stageId}&_t=${cacheBuster}`, { redirect: 'follow' })
@@ -1811,7 +928,6 @@
     function normalizeRecord(item) {
       if (!item) return null;
       if (Array.isArray(item)) {
-        // [timestamp, stageId, studentId, name, clearTimeSec]
         if (item.length < 5) return null;
         return {
           stageId: Number(item[1]),
@@ -1841,7 +957,6 @@
         else if (Array.isArray(rawRecords.rankings)) records = rawRecords.rankings;
       }
 
-      // 데이터 정규화 및 헤더행 필터링
       const validRecords = [];
       records.forEach(r => {
         const norm = normalizeRecord(r);
@@ -1850,7 +965,6 @@
         }
       });
 
-      // 빠른 순(오름차순) 정렬
       validRecords.sort((a, b) => a.clearTimeSec - b.clearTimeSec);
       const top40 = validRecords.slice(0, 40);
 
@@ -1897,7 +1011,6 @@
       });
     }
 
-    // 클리어 기록 전송 (안정적인 다중 전송 방식: fetch + hidden form fallback)
     async function submitScoreToGAS(stageId, clearTimeSec) {
       if (!currentStudent.id || !currentStudent.name) return;
       
@@ -1909,7 +1022,6 @@
       };
 
       try {
-        // 1) fetch POST (text/plain으로 전송하여 CORS preflight 트리거 방지)
         await fetch(GAS_API_URL, {
           method: "POST",
           mode: "no-cors",
@@ -1917,9 +1029,8 @@
           body: JSON.stringify(payload)
         });
       } catch (err) {
-        console.warn("fetch POST 전송 실패, fallback 폼 전송 시도:", err);
+        console.warn("fetch POST 실패, fallback 폼 전송 시도:", err);
         try {
-          // 2) Hidden iframe + form fallback
           let iframe = document.getElementById('gas-hidden-iframe');
           if (!iframe) {
             iframe = document.createElement('iframe');
@@ -1948,7 +1059,6 @@
         }
       }
 
-      // 등록 후 순위표 갱신
       setTimeout(fetchRankingData, 1200);
     }
 
@@ -2029,7 +1139,6 @@
     function setLanguage(lang) {
       currentLanguage = lang;
       
-      // Top Language Switcher Button Highlight
       ['ko', 'en', 'zh', 'ru'].forEach(l => {
         const btn = document.getElementById(`lang-btn-${l}`);
         if (!btn) return;
@@ -2040,10 +1149,9 @@
         }
       });
 
-      // Update all elements with data-i18n
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
-        const mode = el.getAttribute('data-i18n-mode') || 'inline'; // 'inline' or 'block'
+        const mode = el.getAttribute('data-i18n-mode') || 'inline';
         if (translations[key]) {
           const koText = translations[key].ko;
           if (lang === 'ko') {
@@ -2214,7 +1322,6 @@
       const table = document.createElement('table');
       table.className = "border-collapse select-none mx-auto bg-white";
 
-      // Top Header (Column Clues)
       const thead = document.createElement('thead');
       const headerRow = document.createElement('tr');
 
@@ -2245,7 +1352,6 @@
       thead.appendChild(headerRow);
       table.appendChild(thead);
 
-      // Body Cells (Row Clues + Cells)
       const tbody = document.createElement('tbody');
       for (let r = 0; r < size; r++) {
         const tr = document.createElement('tr');
@@ -2363,9 +1469,6 @@
       showToast((currentLanguage === 'ko') ? "퍼즐이 초기화되었습니다." : "Puzzle reset.");
     }
 
-    /* ========================================================
-       8. CHECK ANSWER & SUCCESS
-       ======================================================== */
     function checkAnswer() {
       const stage = stages[currentStageIndex];
       const sol = stage.solution;
@@ -2445,9 +1548,6 @@
       else showToast((currentLanguage === 'ko') ? "마지막 스테이지입니다!" : "Last stage!");
     }
 
-    /* ========================================================
-       9. MODAL & TOAST UTILITIES
-       ======================================================== */
     function openTutorialModal() {
       switchTutTab(1);
       document.getElementById('tutorial-modal').classList.remove('hidden');
