@@ -1735,65 +1735,126 @@
       }
     }
 
+    let isFetchingRanking = false;
+
     function fetchRankingData() {
       updateRankingSubtitle();
       const stage = stages[currentStageIndex];
       const listContainer = document.getElementById('ranking-list-container');
       const refreshIcon = document.getElementById('ranking-refresh-icon');
-      refreshIcon.classList.add('fa-spin');
+      if (refreshIcon) refreshIcon.classList.add('fa-spin');
       
-      const loadingKo = translations.ranking_loading.ko;
-      const loadingSub = (currentLanguage !== 'ko') ? `<span class="sub-lang-block text-indigo-300">(${translations.ranking_loading[currentLanguage] || translations.ranking_loading.en})</span>` : '';
+      const loadingKo = (translations.ranking_loading && translations.ranking_loading.ko) || "순위표 데이터를 조회 중입니다...";
+      const loadingSub = (currentLanguage !== 'ko' && translations.ranking_loading) 
+        ? `<span class="sub-lang-block text-indigo-300">(${translations.ranking_loading[currentLanguage] || translations.ranking_loading.en})</span>` 
+        : '';
       listContainer.innerHTML = `<div class="text-center py-12 text-xs text-slate-500">${loadingKo}${loadingSub}</div>`;
 
-      // 1) Try standard fetch
-      const timeoutId = setTimeout(() => {
-        tryJsonpFetch(stage.id);
-      }, 2500);
+      let hasHandled = false;
+      const stageId = stage.id;
+      const cacheBuster = Date.now();
 
-      fetch(`${GAS_API_URL}?stageId=${stage.id}`, { redirect: 'follow' })
-        .then(res => res.json())
-        .then(data => {
-          clearTimeout(timeoutId);
-          renderRankingList(data);
-          refreshIcon.classList.remove('fa-spin');
-        })
-        .catch(() => {
-          tryJsonpFetch(stage.id);
-        });
-    }
-
-    function tryJsonpFetch(stageId) {
-      const callbackName = 'gasRankingCallback_' + Math.floor(Math.random() * 1000000);
-      const refreshIcon = document.getElementById('ranking-refresh-icon');
-
-      window[callbackName] = function(data) {
+      function handleSuccess(data) {
+        if (hasHandled) return;
+        hasHandled = true;
+        if (refreshIcon) refreshIcon.classList.remove('fa-spin');
         renderRankingList(data);
-        delete window[callbackName];
-        if (scriptTag && scriptTag.parentNode) scriptTag.parentNode.removeChild(scriptTag);
-        refreshIcon.classList.remove('fa-spin');
+      }
+
+      function handleFail(err) {
+        if (hasHandled) return;
+        hasHandled = true;
+        if (refreshIcon) refreshIcon.classList.remove('fa-spin');
+        console.error("순위표 조회 오류:", err);
+        listContainer.innerHTML = `
+          <div class="text-center py-8 text-xs text-rose-400 space-y-1">
+            <p>순위표를 불러오지 못했습니다.</p>
+            <p class="text-[10px] text-slate-500">잠시 후 다시 시도하거나 [새로고침]을 눌러주세요.</p>
+          </div>`;
+      }
+
+      // 전략 1: JSONP 호출 (깃허브 정적 호스팅 CORS 차단 회피 1순위)
+      const callbackName = 'gasRankingCallback_' + Math.floor(Math.random() * 1000000);
+      window[callbackName] = function(rawResponse) {
+        window[callbackName] = null;
+        try { delete window[callbackName]; } catch(e){}
+        handleSuccess(rawResponse);
       };
 
-      const scriptTag = document.createElement('script');
-      scriptTag.src = `${GAS_API_URL}?stageId=${stageId}&callback=${callbackName}`;
-      scriptTag.onerror = function() {
-        const listContainer = document.getElementById('ranking-list-container');
-        listContainer.innerHTML = `
-          <div class="text-center py-8 text-xs text-rose-400">
-            순위표를 불러오지 못했습니다.<br><span class="text-[11px] text-slate-500">잠시 후 다시 시도해주세요.</span>
-          </div>`;
-        delete window[callbackName];
-        if (scriptTag && scriptTag.parentNode) scriptTag.parentNode.removeChild(scriptTag);
-        refreshIcon.classList.remove('fa-spin');
+      const script = document.createElement('script');
+      script.src = `${GAS_API_URL}?stageId=${stageId}&callback=${callbackName}&_t=${cacheBuster}`;
+      script.async = true;
+
+      // JSONP 실패 시 fetch 시도 (혹은 그 반대)
+      script.onerror = function() {
+        if (script && script.parentNode) script.parentNode.removeChild(script);
+        // JSONP 실패 시 일반 fetch 시도
+        fetch(`${GAS_API_URL}?stageId=${stageId}&_t=${cacheBuster}`, { redirect: 'follow' })
+          .then(res => res.json())
+          .then(data => handleSuccess(data))
+          .catch(e => handleFail(e));
       };
-      document.body.appendChild(scriptTag);
+
+      // 타임아웃 4초 설정: 응답 없으면 fetch 시도
+      setTimeout(() => {
+        if (!hasHandled) {
+          fetch(`${GAS_API_URL}?stageId=${stageId}&_t=${cacheBuster}`, { redirect: 'follow' })
+            .then(res => res.json())
+            .then(data => handleSuccess(data))
+            .catch(e => handleFail(e));
+        }
+      }, 3500);
+
+      document.body.appendChild(script);
     }
 
-    function renderRankingList(records) {
+    function normalizeRecord(item) {
+      if (!item) return null;
+      if (Array.isArray(item)) {
+        // [timestamp, stageId, studentId, name, clearTimeSec]
+        if (item.length < 5) return null;
+        return {
+          stageId: Number(item[1]),
+          studentId: String(item[2]),
+          name: String(item[3]),
+          clearTimeSec: Number(item[4])
+        };
+      }
+      return {
+        stageId: Number(item.stageId || item.stage || 0),
+        studentId: String(item.studentId || item.id || ""),
+        name: String(item.name || "익명"),
+        clearTimeSec: Number(item.clearTimeSec || item.time || item.clearTime || 0)
+      };
+    }
+
+    function renderRankingList(rawRecords) {
       const listContainer = document.getElementById('ranking-list-container');
       listContainer.innerHTML = "";
 
-      if (!records || records.length === 0) {
+      let records = [];
+      if (Array.isArray(rawRecords)) {
+        records = rawRecords;
+      } else if (rawRecords && typeof rawRecords === 'object') {
+        if (Array.isArray(rawRecords.data)) records = rawRecords.data;
+        else if (Array.isArray(rawRecords.records)) records = rawRecords.records;
+        else if (Array.isArray(rawRecords.rankings)) records = rawRecords.rankings;
+      }
+
+      // 데이터 정규화 및 헤더행 필터링
+      const validRecords = [];
+      records.forEach(r => {
+        const norm = normalizeRecord(r);
+        if (norm && !isNaN(norm.clearTimeSec) && norm.clearTimeSec > 0 && norm.name && norm.name !== 'name' && norm.name !== '이름') {
+          validRecords.push(norm);
+        }
+      });
+
+      // 빠른 순(오름차순) 정렬
+      validRecords.sort((a, b) => a.clearTimeSec - b.clearTimeSec);
+      const top40 = validRecords.slice(0, 40);
+
+      if (top40.length === 0) {
         const emptyKo = "아직 달성한 학생이 없습니다.<br>첫 번째 랭커에 도전하세요!";
         const emptySub = (currentLanguage !== 'ko') ? `<div class="sub-lang-block text-indigo-300">No records yet. Be the first!</div>` : '';
         listContainer.innerHTML = `
@@ -1804,7 +1865,7 @@
         return;
       }
 
-      records.forEach((row, idx) => {
+      top40.forEach((row, idx) => {
         const rank = idx + 1;
         const item = document.createElement('div');
         
@@ -1836,31 +1897,63 @@
       });
     }
 
+    // 클리어 기록 전송 (안정적인 다중 전송 방식: fetch + hidden form fallback)
     async function submitScoreToGAS(stageId, clearTimeSec) {
       if (!currentStudent.id || !currentStudent.name) return;
       
       const payload = {
-        stageId: stageId,
-        studentId: currentStudent.id,
-        name: currentStudent.name,
-        clearTimeSec: clearTimeSec
+        stageId: Number(stageId),
+        studentId: String(currentStudent.id),
+        name: String(currentStudent.name),
+        clearTimeSec: Number(clearTimeSec)
       };
 
       try {
+        // 1) fetch POST (text/plain으로 전송하여 CORS preflight 트리거 방지)
         await fetch(GAS_API_URL, {
           method: "POST",
           mode: "no-cors",
           headers: { "Content-Type": "text/plain" },
           body: JSON.stringify(payload)
         });
-        setTimeout(fetchRankingData, 1200);
       } catch (err) {
-        console.error("점수 전송 중 오류:", err);
+        console.warn("fetch POST 전송 실패, fallback 폼 전송 시도:", err);
+        try {
+          // 2) Hidden iframe + form fallback
+          let iframe = document.getElementById('gas-hidden-iframe');
+          if (!iframe) {
+            iframe = document.createElement('iframe');
+            iframe.id = 'gas-hidden-iframe';
+            iframe.name = 'gas-hidden-iframe';
+            iframe.style.display = 'none';
+            document.body.appendChild(iframe);
+          }
+          const form = document.createElement('form');
+          form.method = 'POST';
+          form.action = GAS_API_URL;
+          form.target = 'gas-hidden-iframe';
+          
+          for (const key in payload) {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = key;
+            input.value = payload[key];
+            form.appendChild(input);
+          }
+          document.body.appendChild(form);
+          form.submit();
+          setTimeout(() => { form.remove(); }, 1000);
+        } catch(e2) {
+          console.error("점수 전송 최종 실패:", e2);
+        }
       }
+
+      // 등록 후 순위표 갱신
+      setTimeout(fetchRankingData, 1200);
     }
 
     /* ========================================================
-       4. INITIALIZATION & AUTH
+       4. INITIALIZATION & STUDENT AUTH
        ======================================================== */
     function initStorage() {
       const savedStudent = sessionStorage.getItem('ks_student');
