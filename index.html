@@ -109,8 +109,8 @@
 
     /* Custom Scrollbar */
     .custom-scroll::-webkit-scrollbar {
-      width: 5px;
-      height: 5px;
+      width: 6px;
+      height: 6px;
     }
     .custom-scroll::-webkit-scrollbar-track {
       background: #151926;
@@ -122,6 +122,83 @@
     }
     .custom-scroll::-webkit-scrollbar-thumb:hover {
       background: #475569;
+    }
+
+    /* 2D Tutorial Mini Grid Styling */
+    .tut-grid-board {
+      border-collapse: collapse;
+      border: 1.5px solid #475569;
+      background-color: #ffffff;
+    }
+    .tut-grid-board th, .tut-grid-board td {
+      width: 17px;
+      height: 17px;
+      min-width: 17px;
+      min-height: 17px;
+      box-sizing: border-box;
+      text-align: center;
+      padding: 0;
+      font-size: 9px;
+      line-height: 1;
+      font-family: 'Noto Sans Mono', monospace;
+    }
+    .tut-grid-board th {
+      background-color: #f1f5f9;
+      color: #334155;
+      font-weight: 700;
+    }
+    .tut-grid-board td {
+      border: 1px solid #cbd5e1;
+      background-color: #ffffff;
+    }
+    .tut-grid-board td.c-fill {
+      background-color: #475569 !important;
+    }
+    .tut-grid-board td.c-cross {
+      position: relative;
+      background-color: #ffffff;
+    }
+    .tut-grid-board td.c-cross::after {
+      content: "✕";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #3b82f6;
+      font-size: 11px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    /* 2D Pro Tip 1D Strip */
+    .strip-cell {
+      width: 32px;
+      height: 32px;
+      border: 1.5px solid #64748b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      font-weight: bold;
+      background: #ffffff;
+      box-sizing: border-box;
+    }
+    .strip-cell.filled {
+      background-color: #475569;
+    }
+    .strip-cell.filled::after {
+      content: "●";
+      color: #0f172a;
+      font-size: 11px;
+    }
+    .strip-cell.cross {
+      background: #ffffff;
+    }
+    .strip-cell.cross::after {
+      content: "✕";
+      color: #3b82f6;
+      font-weight: 900;
+      font-size: 16px;
     }
   </style>
 </head>
@@ -163,9 +240,9 @@
           <span data-i18n="btn_ranking">순위표</span>
         </button>
 
-        <button onclick="openTutorialModal()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-950 hover:bg-indigo-900 border border-indigo-700/70 text-indigo-200 hover:text-white text-xs font-bold transition shadow-sm">
-          <i class="fa-solid fa-circle-question text-indigo-400"></i>
-          <span data-i18n="btn_tutorial">튜토리얼</span>
+        <button onclick="openTutorialModal()" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-indigo-600 to-sky-600 hover:from-indigo-500 hover:to-sky-500 text-white text-xs font-bold transition shadow-md shadow-indigo-950/60 active:scale-95">
+          <i class="fa-solid fa-circle-question text-yellow-300"></i>
+          <span data-i18n="btn_tutorial">튜토리얼 보기</span>
         </button>
 
         <div class="inline-flex rounded-lg bg-slate-900/90 border border-slate-700/80 p-0.5 shadow-inner" role="group" aria-label="언어 선택">
@@ -357,7 +434,7 @@
     </div>
   </footer>
 
-  <!-- 모달들 생략 없이 온전히 포함 -->
+  <!-- ================= STUDENT LOGIN MODAL ================= -->
   <div id="login-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3">
     <div class="bg-[#141824] rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-700 flex flex-col space-y-4">
       <div class="text-center space-y-1">
@@ -386,61 +463,404 @@
     </div>
   </div>
 
-  <div id="tutorial-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3">
-    <div class="bg-[#141824] rounded-2xl max-w-2xl w-full max-h-[92vh] overflow-hidden shadow-2xl flex flex-col border border-slate-700">
-      <div class="p-4 bg-indigo-600 text-white flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <i class="fa-solid fa-graduation-cap text-xl"></i>
-          <div><h3 class="font-black text-base sm:text-lg" data-i18n="tut_title">네모로직 퍼즐 규칙</h3></div>
+  <!-- ================= UPGRADED 2D VISUAL TUTORIAL MODAL ================= -->
+  <div id="tutorial-modal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-2 sm:p-4">
+    <div class="bg-[#141824] rounded-2xl max-w-3xl w-full max-h-[92vh] overflow-hidden shadow-2xl flex flex-col border border-slate-700">
+      
+      <!-- Tutorial Modal Top Header -->
+      <div class="px-4 py-3 bg-gradient-to-r from-indigo-700 via-indigo-600 to-sky-600 text-white flex items-center justify-between shadow-md">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center backdrop-blur-sm">
+            <i class="fa-solid fa-graduation-cap text-lg text-yellow-300"></i>
+          </div>
+          <div>
+            <h3 class="font-black text-sm sm:text-base tracking-tight" data-i18n="tut_title">네모로직 퍼즐 기본 규칙 & 핵심 팁</h3>
+            <p class="text-[10px] sm:text-xs text-indigo-100 opacity-90">관산중학교 네모로직 마스터 가이드</p>
+          </div>
         </div>
-        <button onclick="closeTutorialModal()" class="w-8 h-8 rounded-full bg-indigo-700/80 hover:bg-indigo-700 flex items-center justify-center text-white font-bold transition">
-          <i class="fa-solid fa-xmark"></i>
+        <button onclick="closeTutorialModal()" class="w-7 h-7 rounded-full bg-black/20 hover:bg-black/40 flex items-center justify-center text-white font-bold transition">
+          <i class="fa-solid fa-xmark text-sm"></i>
         </button>
       </div>
 
-      <div class="flex border-b border-slate-700/80 bg-[#0f121d] px-4 pt-2 gap-2 text-xs font-bold">
+      <!-- Tab Switcher -->
+      <div class="flex border-b border-slate-800 bg-[#0f121d] px-4 pt-2.5 gap-2 text-xs font-bold">
         <button id="tut-tab-btn-1" onclick="switchTutTab(1)" class="pb-2.5 px-3 border-b-2 border-indigo-500 text-indigo-400 flex items-center gap-1.5 transition">
-          <i class="fa-solid fa-book-open"></i><span data-i18n="tut_tab_basic">기본 규칙 & 단계별 풀이</span>
+          <i class="fa-solid fa-book-open"></i>
+          <span data-i18n="tut_tab_basic">기본 규칙 & 6단계 풀이 (우산)</span>
         </button>
         <button id="tut-tab-btn-2" onclick="switchTutTab(2)" class="pb-2.5 px-3 border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-1.5 transition">
-          <i class="fa-solid fa-lightbulb text-amber-400"></i><span data-i18n="tut_tab_pro">고난이도 필수 팁 (교집합)</span>
+          <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i>
+          <span data-i18n="tut_tab_pro">고난이도 필수 팁 (교집합 ∩)</span>
         </button>
       </div>
 
-      <div class="p-5 overflow-y-auto space-y-5 text-xs sm:text-sm text-slate-300 custom-scroll leading-relaxed">
-        <div id="tut-content-1" class="space-y-4">
-          <div class="bg-indigo-950/50 border border-indigo-700/40 rounded-xl p-3.5 space-y-2">
+      <!-- Modal Body Content -->
+      <div class="p-4 sm:p-5 overflow-y-auto space-y-5 text-xs sm:text-sm text-slate-300 custom-scroll leading-relaxed">
+        
+        <!-- ===== TAB 1: BASIC RULES + 6-STEP 2D UMBRELLA PUZZLE ===== -->
+        <div id="tut-content-1" class="space-y-5">
+          <!-- 3 Basic Rules Box -->
+          <div class="bg-indigo-950/40 border border-indigo-700/50 rounded-2xl p-4 space-y-2.5">
             <h4 class="font-black text-indigo-300 text-sm flex items-center gap-2">
-              <i class="fa-solid fa-check-double text-indigo-400"></i><span data-i18n="tut_basic_header">기본 규칙 3가지</span>
+              <i class="fa-solid fa-circle-check text-emerald-400"></i>
+              <span data-i18n="tut_basic_header">기본 규칙</span>
             </h4>
-            <ul class="space-y-1.5 text-slate-300 list-disc list-inside">
-              <li><strong class="text-white" data-i18n="tut_b1">1) 왼쪽과 위쪽 숫자는 연속해서 칠해져야 할 칸의 수</strong><span data-i18n="tut_b1_sub">를 의미합니다.</span></li>
-              <li><strong class="text-white" data-i18n="tut_b2">2) 여러 개의 숫자가 있을 때</strong><span data-i18n="tut_b2_sub">: 숫자와 숫자 사이는 반드시 최소 한 칸 이상을 띄우고 색칠합니다.</span></li>
-              <li><strong class="text-white" data-i18n="tut_b3">3) 칠할 수 없는 빈칸</strong><span data-i18n="tut_b3_sub">에는 X표시를 해두면 남은 칸을 쉽게 유추할 수 있습니다.</span></li>
-            </ul>
+            <div class="space-y-1.5 text-xs sm:text-[13px] text-slate-200 leading-normal pl-1">
+              <p><strong>1)</strong> 왼쪽과 위쪽에 쓰인 숫자는 가로, 세로에 <span class="text-amber-300 font-bold">'연속해서 칠해져야 할 칸의 수'</span>를 의미합니다.</p>
+              <p><strong>2)</strong> 한 줄에 여러 개의 숫자가 있을 때는, <span class="text-amber-300 font-bold">숫자와 숫자 사이에 반드시 한 칸 이상을 띄고</span> 색칠해야 합니다.</p>
+              <p><strong>3)</strong> 칠할 수 없는 칸은 <span class="text-rose-400 font-bold">X표시</span>를 합니다.</p>
+            </div>
+            <p class="text-[11px] text-slate-400 pt-1 border-t border-indigo-800/50">
+              * 아래 예를 들어 <strong>5×5 우산 퍼즐</strong>의 완성 과정을 6단계로 설명해 보겠습니다.
+            </p>
           </div>
-          <p class="text-xs text-slate-400" data-i18n="tut_steps_title">5×5 우산 퍼즐로 배우는 6단계 풀이 과정</p>
-        </div>
-        <div id="tut-content-2" class="hidden space-y-4">
-          <div class="bg-amber-950/40 border border-amber-600/50 rounded-xl p-4">
-            <h4 class="font-black text-amber-300 text-sm flex items-center gap-2 mb-1.5">
-              <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i><span data-i18n="tut_pro_head">고난이도 문제에서 쓸 수 있는 핵심 팁!</span>
-            </h4>
-            <p class="text-xs text-slate-300" data-i18n="tut_pro_sub" data-i18n-mode="block">
-              양 끝에서부터 최대한 밀어붙였을 때 겹치는 칸(교집합)을 찾아 먼저 칠해야 합니다!
+
+          <!-- 6-STEP 2D Mini Nonogram Boards Gallery -->
+          <div>
+            <h5 class="text-xs font-black text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+              <i class="fa-solid fa-table-cells text-indigo-400"></i>
+              <span>단계별 2D 진행 과정 (1단계 ~ 6단계)</span>
+            </h5>
+            
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              
+              <!-- Step 1 Board -->
+              <div class="bg-slate-900/90 border border-slate-700 rounded-xl p-3 flex flex-col items-center shadow">
+                <span class="text-rose-500 font-black text-lg mb-1.5">1.</span>
+                <table class="tut-grid-board">
+                  <thead>
+                    <tr>
+                      <th style="background:#e2e8f0; width:16px;"></th>
+                      <th>2</th><th>1</th><th>5</th><th>3</th><th>2</th>
+                    </tr>
+                    <tr>
+                      <th style="background:#e2e8f0;"></th>
+                      <th style="color:#64748b;"></th><th>3</th><th style="color:#64748b;"></th><th style="color:#64748b;"></th><th style="color:#64748b;"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><th>3</th><td></td><td></td><td class="c-fill"></td><td></td><td></td></tr>
+                    <tr><th>5</th><td class="c-fill"></td><td class="c-fill"></td><td class="c-fill"></td><td class="c-fill"></td><td class="c-fill"></td></tr>
+                    <tr><th>5</th><td class="c-fill"></td><td class="c-fill"></td><td class="c-fill"></td><td class="c-fill"></td><td class="c-fill"></td></tr>
+                    <tr><th>1</th><td></td><td></td><td class="c-fill"></td><td></td><td></td></tr>
+                    <tr><th>2</th><td></td><td></td><td class="c-fill"></td><td></td><td></td></tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Step 2 Board -->
+              <div class="bg-slate-900/90 border border-slate-700 rounded-xl p-3 flex flex-col items-center shadow">
+                <span class="text-rose-500 font-black text-lg mb-1.5">2.</span>
+                <table class="tut-grid-board">
+                  <thead>
+                    <tr>
+                      <th style="background:#e2e8f0; width:16px;"></th>
+                      <th>2</th><th>1</th><th>5</th><th>3</th><th>2</th>
+                    </tr>
+                    <tr>
+                      <th style="background:#e2e8f0;"></th>
+                      <th style="color:#64748b;"></th><th>3</th><th style="color:#64748b;"></th><th style="color:#64748b;"></th><th style="color:#64748b;"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><th>3</th><td></td><td></td><td class="c-fill"></td><td></td><td></td></tr>
+                    <tr><th>5</th><td class="c-fill"></td><td class="c-fill"></td><td class="c-fill"></td><td class="c-fill"></td><td class="c-fill"></td></tr>
+                    <tr><th>5</th><td class="c-fill"></td><td class="c-fill"></td><td class="c-fill"></td><td class="c-fill"></td><td class="c-fill"></td></tr>
+                    <tr><th>1</th><td class="c-cross"></td><td class="c-cross"></td><td class="c-fill"></td><td class="c-cross"></td><td class="c-cross"></td></tr>
+                    <tr><th>2</th><td></td><td></td><td class="c-fill"></td><td></td><td></td></tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Step 3 Board -->
+              <div class="bg-slate-900/90 border border-slate-700 rounded-xl p-3 flex flex-col items-center shadow">
+                <span class="text-rose-500 font-black text-lg mb-1.5">3.</span>
+                <table class="tut-grid-board">
+                  <thead>
+                    <tr>
+                      <th style="background:#e2e8f0; width:16px;"></th>
+                      <th>2</th><th>1</th><th>5</th><th>3</th><th>2</th>
+                    </tr>
+                    <tr>
+                      <th style="background:#e2e8f0;"></th>
+                      <th style="color:#64748b;"></th><th>3</th><th style="color:#64748b;"></th><th style="color:#64748b;"></th><th style="color:#64748b;"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><th>3</th><td></td><td></td><td class="c-fill"></td><td></td><td></td></tr>
+                    <tr><th>5</th><td class="c-fill"></td><td class="c-fill"></td><td class="c-fill"></td><td class="c-fill"></td><td class="c-fill"></td></tr>
+                    <tr><th>5</th><td class="c-fill"></td><td class="c-fill"></td><td class="c-fill"></td><td class="c-fill"></td><td class="c-fill"></td></tr>
+                    <tr><th>1</th><td class="c-cross"></td><td class="c-cross"></td><td class="c-fill"></td><td class="c-cross"></td><td class="c-cross"></td></tr>
+                    <tr><th>2</th><td class="c-cross"></td><td></td><td class="c-fill"></td><td></td><td class="c-cross"></td></tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Step 4 Board -->
+              <div class="bg-slate-900/90 border border-slate-700 rounded-xl p-3 flex flex-col items-center shadow">
+                <span class="text-rose-500 font-black text-lg mb-1.5">4.</span>
+                <table class="tut-grid-board">
+                  <thead>
+                    <tr>
+                      <th style="background:#e2e8f0; width:16px;"></th>
+                      <th>2</th><th>1</th><th>5</th><th>3</th><th>2</th>
+                    </tr>
+                    <tr>
+                      <th style="background:#e2e8f0;"></th>
+                      <th style="color:#64748b;"></th><th>3</th><th style="color:#64748b;"></th><th style="color:#64748b;"></th><th style="color:#64748b;"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><th>3</th><td class="c-cross"></td><td></td><td class="c-fill"></td><td></td><td class="c-cross"></td></tr>
+                    <tr><th>5</th><td class="c-fill"></td><td class="c-fill"></td><td class="c-fill"></td><td class="c-fill"></td><td class="c-fill"></td></tr>
+                    <tr><th>5</th><td class="c-fill"></td><td class="c-fill"></td><td class="c-fill"></td><td class="c-fill"></td><td class="c-fill"></td></tr>
+                    <tr><th>1</th><td class="c-cross"></td><td class="c-cross"></td><td class="c-fill"></td><td class="c-cross"></td><td class="c-cross"></td></tr>
+                    <tr><th>2</th><td class="c-cross"></td><td></td><td class="c-fill"></td><td></td><td class="c-cross"></td></tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Step 5 Board -->
+              <div class="bg-slate-900/90 border border-slate-700 rounded-xl p-3 flex flex-col items-center shadow">
+                <span class="text-rose-500 font-black text-lg mb-1.5">5.</span>
+                <table class="tut-grid-board">
+                  <thead>
+                    <tr>
+                      <th style="background:#e2e8f0; width:16px;"></th>
+                      <th>2</th><th>1</th><th>5</th><th>3</th><th>2</th>
+                    </tr>
+                    <tr>
+                      <th style="background:#e2e8f0;"></th>
+                      <th style="color:#64748b;"></th><th>3</th><th style="color:#64748b;"></th><th style="color:#64748b;"></th><th style="color:#64748b;"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><th>3</th><td class="c-cross"></td><td class="c-fill"></td><td class="c-fill"></td><td class="c-fill"></td><td class="c-cross"></td></tr>
+                    <tr><th>5</th><td class="c-fill"></td><td class="c-fill"></td><td class="c-fill"></td><td class="c-fill"></td><td class="c-fill"></td></tr>
+                    <tr><th>5</th><td class="c-fill"></td><td class="c-fill"></td><td class="c-fill"></td><td class="c-fill"></td><td class="c-fill"></td></tr>
+                    <tr><th>1</th><td class="c-cross"></td><td class="c-cross"></td><td class="c-fill"></td><td class="c-cross"></td><td class="c-cross"></td></tr>
+                    <tr><th>2</th><td class="c-cross"></td><td></td><td class="c-fill"></td><td></td><td class="c-cross"></td></tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Step 6 Board (Umbrella Finished) -->
+              <div class="bg-slate-900/90 border border-indigo-500/70 rounded-xl p-3 flex flex-col items-center shadow ring-1 ring-indigo-500/30">
+                <div class="flex items-center gap-1 mb-1">
+                  <span class="text-rose-500 font-black text-lg">6.</span>
+                  <span class="text-[11px] font-black text-amber-300">우산 완성!</span>
+                </div>
+                <table class="tut-grid-board">
+                  <thead>
+                    <tr>
+                      <th style="background:#e2e8f0; width:16px;"></th>
+                      <th>2</th><th>1</th><th>5</th><th>3</th><th>2</th>
+                    </tr>
+                    <tr>
+                      <th style="background:#e2e8f0;"></th>
+                      <th style="color:#64748b;"></th><th>3</th><th style="color:#64748b;"></th><th style="color:#64748b;"></th><th style="color:#64748b;"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><th>3</th><td class="c-cross"></td><td class="c-fill"></td><td class="c-fill"></td><td class="c-fill"></td><td class="c-cross"></td></tr>
+                    <tr><th>5</th><td class="c-fill"></td><td class="c-fill"></td><td class="c-fill"></td><td class="c-fill"></td><td class="c-fill"></td></tr>
+                    <tr><th>5</th><td class="c-fill"></td><td class="c-fill"></td><td class="c-fill"></td><td class="c-fill"></td><td class="c-fill"></td></tr>
+                    <tr><th>1</th><td class="c-cross"></td><td class="c-cross"></td><td class="c-fill"></td><td class="c-cross"></td><td class="c-cross"></td></tr>
+                    <tr><th>2</th><td class="c-cross"></td><td class="c-fill"></td><td class="c-fill"></td><td class="c-cross"></td><td class="c-cross"></td></tr>
+                  </tbody>
+                </table>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Step Explanations matching Image 1 -->
+          <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-4 space-y-2 text-xs text-slate-300">
+            <p><strong class="text-rose-400 font-black">1번 :</strong> 항상 숫자가 큰 라인부터 색칠합니다. 5×5 퍼즐에서 가로, 세로에 <strong>5</strong>로 표시된 부분은 그 줄을 다 칠해야 합니다.</p>
+            <p><strong class="text-rose-400 font-black">2번 :</strong> 1번 과정을 다 하고 나니, 가로 4번째 줄 <strong>1(1칸 색칠)</strong>이 색칠되었습니다. 그러면 나머지 빈 영역은 <strong>X표시</strong>합니다.</p>
+            <p><strong class="text-rose-400 font-black">3번 :</strong> 1번 과정을 다 하고 나니, 5번째 가로줄은 <strong>2칸 연속</strong> 색칠되어야 하는데 가운데 색칠된 부분을 기준으로 앞, 뒤로 색칠 가능한 경우를 생각해보면 <strong>맨 앞칸과 뒷칸은 X 표시</strong>해야 합니다.</p>
+            <p><strong class="text-rose-400 font-black">4번 :</strong> 세로 1번째, 5번째 <strong>2(2칸 색칠)</strong>도 이미 색칠되었습니다. 그러면 위에 남은 빈 영역은 <strong>X 표시</strong>합니다.</p>
+            <p><strong class="text-rose-400 font-black">5번 :</strong> 가로 1번째 칸은 <strong>3(3칸 색칠)</strong>인데 딱! 3칸 비어있네요. 색칠해서 완성!</p>
+            <p><strong class="text-rose-400 font-black">6번 :</strong> 세로 2번째, 4번째 숫자를 봤을 때, 2번째는 3,1이므로 맨 아래 빈칸을 색칠하고 세로 4번째 맨 아래칸은 X 표시합니다.</p>
+            <p class="text-indigo-400 font-extrabold text-sm pt-1 border-t border-slate-800">
+              &gt;&gt;&gt; 예쁜 우산 그림이 완성되었습니다!
             </p>
           </div>
         </div>
+
+        <!-- ===== TAB 2: PRO TIPS (INTERSECTION ∩) ===== -->
+        <div id="tut-content-2" class="hidden space-y-5">
+          <!-- Pro Tip Header -->
+          <div class="bg-gradient-to-r from-amber-950/40 via-slate-900 to-indigo-950/40 border border-amber-600/40 rounded-2xl p-4 text-center">
+            <h4 class="font-black text-amber-300 text-sm sm:text-base flex items-center justify-center gap-2">
+              <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i>
+              <span>자! 이제 고난이도 문제에서 쓸 수 있는 팁!!</span>
+            </h4>
+            <p class="text-xs text-slate-300 mt-1">
+              수 배열을 양 끝에서 밀어붙였을 때 필연적으로 겹치는 <strong>교집합(∩)</strong>을 찾는 것이 고난이도 클리어의 열쇠입니다.
+            </p>
+          </div>
+
+          <!-- 2D Visual Diagram matching Image 2 -->
+          <div class="bg-slate-900/90 border border-slate-700 rounded-2xl p-4 sm:p-6 shadow-xl flex flex-col items-center">
+            
+            <div class="w-full max-w-lg flex flex-col items-center select-none">
+              
+              <!-- Diagram Top Labels & Columns Container -->
+              <div class="relative w-full flex items-start justify-center gap-6 sm:gap-10 pt-2 pb-4">
+
+                <!-- Left Column (맨 위부터 시작한다면) -->
+                <div class="flex flex-col items-center">
+                  <div class="text-[11px] font-bold text-sky-400 text-center mb-1 leading-tight h-8 flex items-center">
+                    맨 위부터<br>시작한다면,
+                  </div>
+                  <!-- Clue Header -->
+                  <div class="font-mono text-center font-black text-xs text-slate-200 mb-1 leading-tight">
+                    1<br>4<br>2
+                  </div>
+                  <!-- 10 Cells Strip -->
+                  <div class="flex flex-col border-2 border-slate-600 bg-white shadow-md">
+                    <div class="strip-cell filled"></div>           <!-- cell 0: 1 -->
+                    <div class="strip-cell cross"></div>            <!-- cell 1: X -->
+                    <div class="strip-cell filled"></div>           <!-- cell 2: 4 (1) -->
+                    <div class="strip-cell filled" id="col1-c3"></div> <!-- cell 3: 4 (2) -->
+                    <div class="strip-cell filled" id="col1-c4"></div> <!-- cell 4: 4 (3) -->
+                    <div class="strip-cell filled" id="col1-c5"></div> <!-- cell 5: 4 (4) -->
+                    <div class="strip-cell cross"></div>            <!-- cell 6: X -->
+                    <div class="strip-cell filled"></div>           <!-- cell 7: 2 (1) -->
+                    <div class="strip-cell filled" id="col1-c8"></div> <!-- cell 8: 2 (2) -->
+                    <div class="strip-cell"></div>                  <!-- cell 9: empty -->
+                  </div>
+                </div>
+
+                <!-- Intersection (∩) Center Marker -->
+                <div class="flex flex-col items-center justify-center self-center pt-10">
+                  <span class="text-4xl sm:text-5xl font-black text-slate-100 select-none drop-shadow-lg leading-none" style="font-family:serif;">∩</span>
+                  <span class="text-[10px] text-indigo-400 font-bold mt-1">교집합</span>
+                </div>
+
+                <!-- Middle Column (맨 아래부터 시작한다면) -->
+                <div class="flex flex-col items-center">
+                  <div class="text-[11px] font-bold text-sky-400 text-center mb-1 leading-tight h-8 flex items-center">
+                    맨 아래부터<br>시작한다면,
+                  </div>
+                  <!-- Clue Header -->
+                  <div class="font-mono text-center font-black text-xs text-slate-200 mb-1 leading-tight">
+                    1<br>4<br>2
+                  </div>
+                  <!-- 10 Cells Strip -->
+                  <div class="flex flex-col border-2 border-slate-600 bg-white shadow-md">
+                    <div class="strip-cell"></div>                  <!-- cell 0: empty -->
+                    <div class="strip-cell filled"></div>           <!-- cell 1: 1 -->
+                    <div class="strip-cell cross"></div>            <!-- cell 2: X -->
+                    <div class="strip-cell filled" id="col2-c3"></div> <!-- cell 3: 4 (1) -->
+                    <div class="strip-cell filled" id="col2-c4"></div> <!-- cell 4: 4 (2) -->
+                    <div class="strip-cell filled" id="col2-c5"></div> <!-- cell 5: 4 (3) -->
+                    <div class="strip-cell filled"></div>           <!-- cell 6: 4 (4) -->
+                    <div class="strip-cell cross"></div>            <!-- cell 7: X -->
+                    <div class="strip-cell filled" id="col2-c8"></div> <!-- cell 8: 2 (1) -->
+                    <div class="strip-cell filled"></div>           <!-- cell 9: 2 (2) -->
+                  </div>
+                </div>
+
+                <!-- Arrows & Right Column (반드시 겹치는 부분 색칠) -->
+                <div class="flex items-center gap-1.5 sm:gap-3">
+                  <!-- Custom SVG Arrows linking the overlapping rows -->
+                  <div class="flex flex-col justify-between pt-24 h-[320px] text-indigo-400">
+                    <i class="fa-solid fa-arrow-right-long text-xs sm:text-sm"></i>
+                    <i class="fa-solid fa-arrow-right-long text-xs sm:text-sm"></i>
+                    <i class="fa-solid fa-arrow-right-long text-xs sm:text-sm"></i>
+                    <i class="fa-solid fa-arrow-right-long text-xs sm:text-sm"></i>
+                  </div>
+
+                  <div class="flex flex-col items-center">
+                    <div class="text-[11px] font-bold text-amber-300 text-center mb-1 leading-tight h-8 flex items-center">
+                      반드시 겹치는<br>부분 색칠!
+                    </div>
+                    <!-- Clue Header -->
+                    <div class="font-mono text-center font-black text-xs text-slate-200 mb-1 leading-tight">
+                      1<br>4<br>2
+                    </div>
+                    <!-- 10 Cells Strip with bracket & overlap -->
+                    <div class="relative flex flex-col border-2 border-slate-600 bg-white shadow-md">
+                      <div class="strip-cell"></div> <!-- 0 -->
+                      <div class="strip-cell"></div> <!-- 1 -->
+                      <div class="strip-cell"></div> <!-- 2 -->
+                      
+                      <!-- Guaranteed Overlap Rows: 3, 4, 5 (for '4') -->
+                      <div class="strip-cell filled ring-1 ring-amber-400"></div> <!-- 3 -->
+                      <div class="strip-cell filled ring-1 ring-amber-400"></div> <!-- 4 -->
+                      <div class="strip-cell filled ring-1 ring-amber-400"></div> <!-- 5 -->
+                      
+                      <div class="strip-cell"></div> <!-- 6 -->
+                      <div class="strip-cell"></div> <!-- 7 -->
+                      
+                      <!-- Guaranteed Overlap Row: 8 (for '2') -->
+                      <div class="strip-cell filled ring-1 ring-amber-400"></div> <!-- 8 -->
+                      
+                      <div class="strip-cell"></div> <!-- 9 -->
+
+                      <!-- Bracket Annotation for '4' -->
+                      <div class="absolute left-[36px] top-[96px] h-[96px] flex items-center">
+                        <span class="text-2xl text-amber-400 font-light">]</span>
+                        <span class="text-[10px] font-black text-amber-300 ml-1 whitespace-nowrap">4의 겹침 (3칸)</span>
+                      </div>
+
+                      <!-- Bracket Annotation for '2' -->
+                      <div class="absolute left-[36px] top-[256px] h-[32px] flex items-center">
+                        <span class="text-xl text-amber-400 font-light">]</span>
+                        <span class="text-[10px] font-black text-amber-300 ml-1 whitespace-nowrap">2의 겹침 (1칸)</span>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+              
+            </div>
+
+          </div>
+
+          <!-- Exact Explanatory Text matching Image 2 -->
+          <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-5 text-center space-y-4 text-xs sm:text-sm">
+            <p class="text-slate-300 font-medium">
+              난이도가 높아질수록<br>
+              <strong class="text-white text-sm">퍼즐의 가로, 세로 칸 수가 많아집니다.</strong>
+            </p>
+
+            <div class="py-2 border-y border-slate-800/80 space-y-1.5 text-slate-200">
+              <p>이 때는 수 배열을</p>
+              <p><span class="text-sky-300 font-bold">맨 위에서부터 칠했을 때</span>와</p>
+              <p><span class="text-sky-300 font-bold">아래에서부터 칠했을 때</span>를 생각한 후,</p>
+              <p class="text-amber-300 font-extrabold text-sm pt-1">
+                겹쳐지는 칸(교집합)이 어디인지를 찾아야 합니다.
+              </p>
+            </div>
+
+            <p class="text-slate-300">
+              이 칸들이 힌트가 되어<br>
+              <strong class="text-indigo-300">다른 부분을 추가로 채울 수 있습니다.</strong>
+            </p>
+          </div>
+
+        </div>
+
       </div>
+
+      <!-- Modal Bottom Actions -->
       <div class="p-3 bg-[#0d0f17] border-t border-slate-800 flex items-center justify-between">
-        <span class="text-[11px] text-slate-500 pl-2">Kwangsan Middle School Logic Lab</span>
-        <button onclick="closeTutorialModal()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl shadow transition">
-          <span data-i18n="btn_confirm">확인했습니다</span>
+        <span class="text-[11px] text-slate-500 pl-2">관산중학교 비주얼 가이드 &copy; Kwangsan Logic Lab</span>
+        <button onclick="closeTutorialModal()" class="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-sky-600 hover:from-indigo-500 hover:to-sky-500 text-white text-xs font-bold rounded-xl shadow-md transition active:scale-95">
+          <span data-i18n="btn_confirm">규칙을 이해했습니다</span>
         </button>
       </div>
+
     </div>
   </div>
 
+  <!-- ================= SUCCESS MODAL ================= -->
   <div id="success-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
     <div class="bg-[#141824] rounded-2xl max-w-sm w-full p-6 text-center space-y-4 shadow-2xl border border-emerald-500/50">
       <div class="w-16 h-16 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center text-3xl mx-auto">
@@ -462,11 +882,13 @@
     </div>
   </div>
 
+  <!-- Toast Notification -->
   <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-slate-900/95 border border-slate-700 text-white px-4 py-2.5 rounded-xl shadow-2xl text-xs font-bold transition-all duration-300 opacity-0 pointer-events-none transform translate-y-3 flex items-center gap-2">
     <i id="toast-icon" class="fa-solid fa-circle-info text-indigo-400"></i>
     <span id="toast-message">알림</span>
   </div>
 
+  <!-- ================= JAVASCRIPT LOGIC ================= -->
   <script>
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxG8bsk_L_p303M1W5laKqWl9-2KFyK062IR383wOEcnv1-KEyWM6TvIDrIEh3fMo0F-A/exec";
 
@@ -485,19 +907,10 @@
     const translations = {
       badge_change: { ko: "[학생 변경]", en: "[Change Student]", zh: "[更换学生]", ru: "[Сменить]" },
       btn_ranking: { ko: "순위표", en: "Leaderboard", zh: "排行榜", ru: "Таблица лидеров" },
-      btn_tutorial: { ko: "튜토리얼", en: "Tutorial", zh: "教程", ru: "Обучение" },
-      tut_tab_basic: { ko: "기본 규칙 & 단계별 풀이", en: "Basic Rules", zh: "基础规则", ru: "Правила" },
-      tut_tab_pro: { ko: "고난이도 필수 팁", en: "Pro Tips", zh: "高阶技巧", ru: "Советы" },
-      tut_basic_header: { ko: "기본 규칙 3가지", en: "3 Basic Rules", zh: "3项基本规则", ru: "3 правила" },
-      tut_b1: { ko: "1) 왼쪽과 위쪽 숫자는 연속해서 칠해져야 할 칸의 수", en: "Numbers show consecutive filled cells", zh: "数字代表连续格数", ru: "Числа — клетки подряд" },
-      tut_b1_sub: { ko: "를 의미합니다.", en: ".", zh: "。", ru: "." },
-      tut_b2: { ko: "2) 여러 개의 숫자가 있을 때", en: "Multiple numbers", zh: "多个数字时", ru: "Несколько чисел" },
-      tut_b2_sub: { ko: ": 최소 한 칸 이상을 띄우고 색칠합니다.", en: ": At least one gap.", zh: ": 必须留空。", ru: ": с пробелом." },
-      tut_b3: { ko: "3) 칠할 수 없는 빈칸", en: "Definitely empty cells", zh: "空白格", ru: "Пустые клетки" },
-      tut_b3_sub: { ko: "에는 X표시를 해둡니다.", en: ": Mark with X.", zh: ": 打上 X 标记。", ru: ": помечайте X." },
-      tut_steps_title: { ko: "5×5 우산 퍼즐 풀이 과정", en: "5×5 Umbrella Puzzle Guide", zh: "雨伞拼图解析", ru: "Пример зонтика" },
-      tut_pro_head: { ko: "고난이도 필수 팁!", en: "Pro Tips!", zh: "通关秘诀！", ru: "Секрет уровней!" },
-      tut_pro_sub: { ko: "양 끝에서 최대한 밀었을 때 겹치는 교집합을 먼저 칠하세요!", en: "Find guaranteed overlap cells first!", zh: "优先寻找重叠交集格！", ru: "Ищите пересечения!" },
+      btn_tutorial: { ko: "튜토리얼 보기", en: "Tutorial", zh: "查看教程", ru: "Обучение" },
+      tut_tab_basic: { ko: "기본 규칙 & 6단계 풀이 (우산)", en: "Basic Rules (Umbrella 6-Step)", zh: "基础规则与6步解析(雨伞)", ru: "Правила (Зонтик 6 шагов)" },
+      tut_tab_pro: { ko: "고난이도 필수 팁 (교집합 ∩)", en: "Pro Tips (Intersection ∩)", zh: "高阶技巧 (交集 ∩)", ru: "Советы (Пересечение ∩)" },
+      tut_basic_header: { ko: "기본 규칙", en: "Basic Rules", zh: "基本规则", ru: "Основные правила" },
       login_title: { ko: "관산중학교 학생 확인", en: "Student Verification", zh: "学生认证", ru: "Вход" },
       login_desc: { ko: "학번과 이름을 입력하고 퍼즐을 시작하세요.", en: "Enter Student ID and Name.", zh: "请输入学号与姓名。", ru: "Введите номер и имя." },
       login_stuid_label: { ko: "학번 (예: 20315)", en: "Student ID", zh: "学号", ru: "Номер" },
@@ -512,14 +925,14 @@
       mode_mark: { ko: "X 표시", en: "Mark X", zh: "标X", ru: "Крестик" },
       btn_reset: { ko: "초기화", en: "Reset", zh: "重置", ru: "Сброс" },
       tip_pc: { ko: "PC: 좌클릭 = 칠하기 | 우클릭 = X표시", en: "PC: Left = Fill | Right = X", zh: "PC: 左键=涂色 | 右键=X", ru: "ПК: ЛКМ=Закрасить | ПКМ=X" },
-      tip_mobile: { ko: "모바일: 상단 모드 선택 후 탭/드래그", en: "Mobile: Select mode & tap", zh: "移动端: 选模式后点击", ru: "Выбирайте режим" },
+      tip_mobile: { ko: "모바일: 상단 모드 선택 후 탭 또는 드래그", en: "Mobile: Select mode & tap/drag", zh: "移动端: 选模式后点击或滑动", ru: "Выбирайте режим" },
       btn_check: { ko: "정답 확인 및 기록 등록", en: "Check Answer & Submit", zh: "核对答案并提交", ru: "Проверить ответ" },
       ranking_title: { ko: "실시간 랭킹 순위표", en: "Live Leaderboard", zh: "实时排行榜", ru: "Таблица рекордов" },
       ranking_top40: { ko: "상위 40위", en: "TOP 40", zh: "前 40 名", ru: "ТОП 40" },
       ranking_notice: { ko: "* 정답 확인 시 클리어 시간이 자동으로 서버에 기록됩니다.", en: "* Clear time is automatically recorded.", zh: "* 通关用时自动记录。", ru: "* Время сохраняется." },
       ranking_loading: { ko: "순위표 데이터를 조회 중입니다...", en: "Loading leaderboard...", zh: "正在加载数据...", ru: "Загрузка..." },
-      tut_title: { ko: "네모로직 퍼즐 규칙", en: "Nonogram Rules", zh: "数织规则", ru: "Правила" },
-      btn_confirm: { ko: "확인했습니다", en: "Got it", zh: "我知道了", ru: "Понятно" },
+      tut_title: { ko: "네모로직 퍼즐 기본 규칙 & 핵심 팁", en: "Nonogram Rules & Pro Tips", zh: "数织规则与通关技巧", ru: "Правила и советы" },
+      btn_confirm: { ko: "규칙을 이해했습니다", en: "I Understand", zh: "我已掌握", ru: "Понятно" },
       modal_success_title: { ko: "정답입니다! 완벽해요!", en: "Correct! Outstanding!", zh: "完全正确！", ru: "Правильно!" },
       modal_next_btn: { ko: "다음 스테이지 도전", en: "Next Stage", zh: "下一关", ru: "Следующий" },
       modal_close_btn: { ko: "퍼즐 계속 보기", en: "Keep Viewing", zh: "继续查看", ru: "Остаться" }
@@ -825,7 +1238,7 @@
     }
 
     /* ========================================================
-       3. RANKING SYSTEM (CROSS-ORIGIN & JSONP SAFE FETCH)
+       3. RANKING SYSTEM (CROSS-ORIGIN SAFE)
        ======================================================== */
     function toggleRankingDrawer(forceOpen) {
       const drawer = document.getElementById('ranking-drawer');
@@ -852,11 +1265,9 @@
         subTitle.textContent = `스테이지 ${stage.id} (${koTitle}) 순위`;
       } else {
         const foreignTitle = stage.title[currentLanguage] || stage.title.en;
-        subTitle.innerHTML = `스테이지 ${stage.id} (${koTitle}) 순위 <span class="sub-lang text-indigo-300">Stage ${stage.id} (${foreignTitle}) Rankings</span>`;
+        subTitle.innerHTML = `스테이지 ${stage.id} (${koTitle}) 순위 <span class="sub-lang text-indigo-300">Stage ${stage.id} (${foreignTitle})</span>`;
       }
     }
-
-    let isFetchingRanking = false;
 
     function fetchRankingData() {
       updateRankingSubtitle();
@@ -1134,7 +1545,7 @@
     }
 
     /* ========================================================
-       5. DUAL-LANGUAGE SYSTEM (Korean Base + Sub-language)
+       5. DUAL-LANGUAGE SYSTEM
        ======================================================== */
     function setLanguage(lang) {
       currentLanguage = lang;
