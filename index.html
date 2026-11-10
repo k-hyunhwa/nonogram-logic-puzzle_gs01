@@ -1,0 +1,2196 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>관산중학교 네모네모 로직 (Kwangsan Middle School Nonogram)</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <!-- Google Fonts: Pretendard / Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;800;900&family=Inter:wght@400;600;700;800&family=Noto+Sans+SC:wght@400;700&family=Noto+Sans+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Noto Sans KR', 'Inter', 'Noto Sans SC', sans-serif;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+
+    /* Sub-language text styling for dual-language layout */
+    .sub-lang {
+      font-size: 0.82em;
+      opacity: 0.88;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      margin-left: 0.25rem;
+    }
+    .sub-lang-block {
+      display: block;
+      font-size: 0.78em;
+      opacity: 0.82;
+      font-weight: 500;
+      line-height: 1.25;
+      margin-top: 0.15rem;
+    }
+
+    /* Custom Nonogram Grid Border System */
+    .nono-cell {
+      box-sizing: border-box;
+      border-right: 1px solid #cbd5e1;
+      border-bottom: 1px solid #cbd5e1;
+      transition: background-color 0.08s ease, transform 0.05s ease;
+      cursor: pointer;
+    }
+    .nono-cell:hover {
+      filter: brightness(0.96);
+    }
+    .nono-cell:active {
+      transform: scale(0.95);
+    }
+    
+    /* 5-Block Division Lines (Major Grid) */
+    .border-block-r {
+      border-right: 2.5px solid #1e293b !important;
+    }
+    .border-block-b {
+      border-bottom: 2.5px solid #1e293b !important;
+    }
+    .border-block-l {
+      border-left: 2.5px solid #1e293b !important;
+    }
+    .border-block-t {
+      border-top: 2.5px solid #1e293b !important;
+    }
+
+    /* Cell States */
+    .cell-empty {
+      background-color: #ffffff;
+    }
+    .cell-filled {
+      background-color: #0f172a !important;
+    }
+    .cell-marked {
+      background-color: #ffffff;
+      position: relative;
+    }
+    .cell-marked::after {
+      content: "✕";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #f43f5e;
+      font-weight: 900;
+      font-size: 1.1em;
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    /* Clue Headers */
+    .col-clue {
+      border-right: 1px solid #cbd5e1;
+      border-bottom: 2.5px solid #1e293b;
+      background-color: #f8fafc;
+      font-family: 'Noto Sans Mono', monospace;
+      color: #1e293b;
+    }
+    .row-clue {
+      border-bottom: 1px solid #cbd5e1;
+      border-right: 2.5px solid #1e293b;
+      background-color: #f8fafc;
+      font-family: 'Noto Sans Mono', monospace;
+      color: #1e293b;
+    }
+
+    /* Custom Scrollbar */
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: #1e222d;
+      border-radius: 9999px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #475569;
+      border-radius: 9999px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb:hover {
+      background: #64748b;
+    }
+  </style>
+</head>
+<body class="bg-[#0b0d13] text-slate-100 min-h-screen flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
+
+  <!-- ================= TOP APP HEADER ================= -->
+  <header class="sticky top-0 z-40 bg-[#121520]/95 backdrop-blur-md border-b border-slate-800 shadow-lg">
+    <div class="max-w-7xl mx-auto px-3 sm:px-4 py-2.5 flex flex-wrap items-center justify-between gap-2.5">
+      
+      <!-- School Logo & Student Badge -->
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-sky-400 flex items-center justify-center text-white shadow-md shadow-indigo-950 font-black text-lg">
+            관
+          </div>
+          <div>
+            <h1 class="text-sm sm:text-base font-extrabold tracking-tight text-white flex items-center gap-1.5">
+              <span>관산중학교 네모로직</span>
+              <span class="text-xs px-1.5 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-700/60 font-semibold">KS-Logic</span>
+            </h1>
+            <p class="text-[10px] sm:text-xs text-slate-400 font-medium">Kwangsan Middle School Nonogram Puzzle</p>
+          </div>
+        </div>
+
+        <!-- Student Info Badge -->
+        <div id="student-badge" class="hidden items-center gap-1.5 bg-slate-900/90 border border-slate-700/80 rounded-lg px-2.5 py-1 text-xs">
+          <i class="fa-solid fa-id-card text-indigo-400"></i>
+          <span class="font-bold text-slate-200" id="badge-info"></span>
+          <button onclick="showLoginModal()" class="text-indigo-400 hover:text-indigo-300 ml-1 text-[11px] underline font-medium">
+            <span data-i18n="badge_change">[학생 변경]</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Controls: Tutorial & Language Switcher -->
+      <div class="flex items-center gap-2 sm:gap-3 ml-auto">
+        
+        <!-- Tutorial Button -->
+        <button onclick="openTutorialModal()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-950 hover:bg-indigo-900 border border-indigo-700/70 text-indigo-200 hover:text-white text-xs font-bold transition shadow-sm">
+          <i class="fa-solid fa-circle-question text-indigo-400"></i>
+          <span data-i18n="btn_tutorial">튜토리얼</span>
+        </button>
+
+        <!-- Language Switcher Bar -->
+        <div class="inline-flex rounded-lg bg-slate-900/90 border border-slate-700/80 p-0.5" role="group">
+          <button onclick="setLanguage('ko')" id="lang-btn-ko" class="px-2.5 py-1 rounded-md text-xs font-bold transition bg-indigo-600 text-white shadow-sm">
+            한국어
+          </button>
+          <button onclick="setLanguage('en')" id="lang-btn-en" class="px-2.5 py-1 rounded-md text-xs font-semibold text-slate-400 hover:text-slate-200 transition">
+            EN
+          </button>
+          <button onclick="setLanguage('zh')" id="lang-btn-zh" class="px-2.5 py-1 rounded-md text-xs font-semibold text-slate-400 hover:text-slate-200 transition">
+            中文
+          </button>
+          <button onclick="setLanguage('ru')" id="lang-btn-ru" class="px-2.5 py-1 rounded-md text-xs font-semibold text-slate-400 hover:text-slate-200 transition">
+            RU
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ================= MAIN CONTAINER ================= -->
+  <main class="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6 flex-1 w-full space-y-4 sm:space-y-6">
+
+    <!-- DIFFICULTY CARDS & STAGE INDICATORS (TOTAL 12 STAGES) -->
+    <section class="space-y-3">
+      <div class="flex items-center justify-between">
+        <h2 class="text-xs sm:text-sm font-bold text-slate-400 flex items-center gap-2">
+          <i class="fa-solid fa-layer-group text-indigo-400"></i>
+          <span data-i18n="nav_stage_select">스테이지 선택 및 달성 현황</span>
+        </h2>
+        <span id="total-progress-text" class="text-xs font-semibold text-indigo-300 bg-indigo-950/70 px-2.5 py-1 rounded-full border border-indigo-800/50">
+          0 / 12 달성
+        </span>
+      </div>
+
+      <!-- 4 Difficulty Columns Grid -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3.5">
+        
+        <!-- 초급 (Beginner - 5x5: 3 Questions) -->
+        <div class="bg-[#141824] border border-slate-800 rounded-xl p-3 flex flex-col justify-between shadow-md">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-black px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800/60" data-i18n="diff_novice">
+              초급 (5×5)
+            </span>
+            <span class="text-[10px] text-slate-500 font-bold">1~3</span>
+          </div>
+          <!-- 3 Indicators aligned with card width -->
+          <div class="flex items-center justify-between gap-1 mt-1 px-1" id="indicator-group-0"></div>
+        </div>
+
+        <!-- 중급 (Intermediate - 10x10: 3 Questions) -->
+        <div class="bg-[#141824] border border-slate-800 rounded-xl p-3 flex flex-col justify-between shadow-md">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-black px-2 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800/60" data-i18n="diff_medium">
+              중급 (10×10)
+            </span>
+            <span class="text-[10px] text-slate-500 font-bold">4~6</span>
+          </div>
+          <div class="flex items-center justify-between gap-1 mt-1 px-1" id="indicator-group-1"></div>
+        </div>
+
+        <!-- 상급 (Advanced - 15x15: 3 Questions) -->
+        <div class="bg-[#141824] border border-slate-800 rounded-xl p-3 flex flex-col justify-between shadow-md">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-black px-2 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800/60" data-i18n="diff_hard">
+              상급 (15×15)
+            </span>
+            <span class="text-[10px] text-slate-500 font-bold">7~9</span>
+          </div>
+          <div class="flex items-center justify-between gap-1 mt-1 px-1" id="indicator-group-2"></div>
+        </div>
+
+        <!-- 고급 (Expert - 20x20: 3 Questions) -->
+        <div class="bg-[#141824] border border-slate-800 rounded-xl p-3 flex flex-col justify-between shadow-md">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-black px-2 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-800/60" data-i18n="diff_expert">
+              고급 (20×20)
+            </span>
+            <span class="text-[10px] text-slate-500 font-bold">10~12</span>
+          </div>
+          <div class="flex items-center justify-between gap-1 mt-1 px-1" id="indicator-group-3"></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- GAME BOARD & CONTROL INTERFACE -->
+    <section class="bg-[#12151f] border border-slate-800/80 rounded-2xl p-3.5 sm:p-5 shadow-xl flex flex-col items-center">
+      
+      <!-- Current Stage Header & Navigation -->
+      <div class="w-full flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3 mb-4">
+        
+        <div class="flex items-center gap-2">
+          <button onclick="prevStage()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center transition" title="이전 문제">
+            <i class="fa-solid fa-chevron-left text-xs"></i>
+          </button>
+          <div>
+            <div class="flex items-center gap-2">
+              <span id="current-stage-badge" class="px-2 py-0.5 rounded text-[11px] font-black bg-indigo-950 text-indigo-300 border border-indigo-700/60">
+                스테이지 1
+              </span>
+              <h3 id="stage-title-text" class="text-sm sm:text-base font-extrabold text-white">하트</h3>
+            </div>
+            <p id="stage-size-text" class="text-[10px] sm:text-xs text-slate-400">5 × 5 퍼즐</p>
+          </div>
+          <button onclick="nextStage()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center transition" title="다음 문제">
+            <i class="fa-solid fa-chevron-right text-xs"></i>
+          </button>
+        </div>
+
+        <!-- Mode Toggle (Fill / Mark X) for Mobile & Touch Screen -->
+        <div class="flex items-center gap-1.5 bg-slate-900 p-1 rounded-xl border border-slate-800">
+          <span class="text-[11px] font-bold text-slate-400 px-2 hidden sm:inline" data-i18n="label_touch_mode">조작 모드:</span>
+          <button onclick="setToolMode('fill')" id="tool-fill-btn" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition bg-indigo-600 text-white shadow-md">
+            <i class="fa-solid fa-square"></i>
+            <span data-i18n="mode_fill">칠하기</span>
+          </button>
+          <button onclick="setToolMode('mark')" id="tool-mark-btn" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-400 hover:text-slate-200">
+            <i class="fa-solid fa-xmark text-rose-400"></i>
+            <span data-i18n="mode_mark">X 표시</span>
+          </button>
+        </div>
+
+        <!-- Reset Button -->
+        <button onclick="resetCurrentGrid()" class="px-2.5 py-1.5 rounded-lg bg-slate-800/80 hover:bg-rose-950 hover:text-rose-300 hover:border-rose-800 border border-slate-700 text-slate-300 text-xs font-semibold transition flex items-center gap-1.5">
+          <i class="fa-solid fa-arrow-rotate-left"></i>
+          <span data-i18n="btn_reset">초기화</span>
+        </button>
+
+      </div>
+
+      <!-- Instruction / Hint for PC & Mobile -->
+      <div class="text-[11px] sm:text-xs text-slate-400 mb-3 text-center flex flex-wrap items-center justify-center gap-3 bg-slate-900/60 px-3 py-1.5 rounded-full border border-slate-800/50">
+        <span class="flex items-center gap-1">
+          <i class="fa-solid fa-computer-mouse text-indigo-400"></i>
+          <span data-i18n="tip_pc">PC: 좌클릭 = 칠하기 | 우클릭 = X표시</span>
+        </span>
+        <span class="text-slate-600">|</span>
+        <span class="flex items-center gap-1">
+          <i class="fa-solid fa-hand-pointer text-indigo-400"></i>
+          <span data-i18n="tip_mobile">모바일: 상단 모드 선택 후 탭 또는 드래그</span>
+        </span>
+      </div>
+
+      <!-- PUZZLE BOARD CONTAINER (WHITE PAPER THEME) -->
+      <div class="w-full flex justify-center overflow-x-auto pb-4 pt-1 custom-scroll" id="board-scroll-area">
+        <div id="nonogram-container" class="inline-block bg-white rounded-xl shadow-2xl p-2 sm:p-3 border-2 border-slate-900 select-none">
+          <!-- Dynamically Rendered Nonogram Table Goes Here -->
+        </div>
+      </div>
+
+      <!-- Action Footer: Check Answer Button -->
+      <div class="w-full flex flex-col sm:flex-row items-center justify-center gap-3 mt-4 pt-4 border-t border-slate-800">
+        <button onclick="checkAnswer()" class="w-full sm:w-auto px-8 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-extrabold text-sm sm:text-base shadow-lg shadow-emerald-950/70 hover:shadow-emerald-900/90 active:scale-95 transition flex items-center justify-center gap-2">
+          <i class="fa-solid fa-circle-check text-lg"></i>
+          <span data-i18n="btn_check">정답 확인</span>
+        </button>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="bg-[#0e111a] border-t border-slate-800/80 py-3 text-center text-slate-400 text-[11px]">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-1.5">
+      <p class="font-medium">관산중학교 정보/수학 융합 체험 프로그램</p>
+      <p class="font-mono text-slate-400">Nonogram Logic Lab &copy; Kwangsan Middle School</p>
+    </div>
+  </footer>
+
+  <!-- ================= LOGIN MODAL ================= -->
+  <div id="login-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3">
+    <div class="bg-[#141824] rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-700 flex flex-col space-y-4 animate-in fade-in zoom-in-95 duration-200">
+      
+      <div class="text-center space-y-1">
+        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-600 to-sky-400 flex items-center justify-center text-white text-xl mx-auto shadow-lg shadow-indigo-950 font-black">
+          관
+        </div>
+        <h3 class="font-extrabold text-lg text-white pt-2" data-i18n="login_title">관산중학교 학생 확인</h3>
+        <p class="text-xs text-slate-400" data-i18n="login_desc">학번과 이름을 입력하고 퍼즐을 시작하세요.</p>
+      </div>
+
+      <div class="space-y-3 pt-1">
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1" data-i18n="login_stuid_label">학번 (예: 20315)</label>
+          <input type="text" id="login-stuid-input" maxlength="10" placeholder="학번 입력" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500 font-mono">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1" data-i18n="login_name_label">이름</label>
+          <input type="text" id="login-name-input" maxlength="10" placeholder="이름 입력" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500">
+        </div>
+      </div>
+
+      <p id="login-error-msg" class="text-xs text-rose-400 text-center font-semibold hidden"></p>
+
+      <button onclick="handleLoginSubmit()" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-sm shadow-lg shadow-indigo-950 transition active:scale-95">
+        <span data-i18n="login_btn">퍼즐 게임 시작하기</span>
+      </button>
+
+    </div>
+  </div>
+
+  <!-- ================= TUTORIAL MODAL ================= -->
+  <div id="tutorial-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3">
+    <div class="bg-[#141824] rounded-2xl max-w-2xl w-full max-h-[92vh] overflow-hidden shadow-2xl flex flex-col border border-slate-700 animate-in fade-in zoom-in-95 duration-200">
+      
+      <!-- Modal Header -->
+      <div class="p-4 bg-indigo-600 text-white flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-graduation-cap text-xl"></i>
+          <div>
+            <h3 class="font-black text-base sm:text-lg" data-i18n="tut_title">네모로직 퍼즐 규칙</h3>
+          </div>
+        </div>
+        <button onclick="closeTutorialModal()" class="w-8 h-8 rounded-full bg-indigo-700/80 hover:bg-indigo-700 flex items-center justify-center text-white font-bold transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Tutorial Navigation Tabs -->
+      <div class="flex border-b border-slate-700/80 bg-[#0f121d] px-4 pt-2 gap-2 text-xs font-bold">
+        <button id="tut-tab-btn-1" onclick="switchTutTab(1)" class="pb-2.5 px-3 border-b-2 border-indigo-500 text-indigo-400 flex items-center gap-1.5 transition">
+          <i class="fa-solid fa-book-open"></i>
+          <span data-i18n="tut_tab_basic">기본 규칙 & 단계별 풀이</span>
+        </button>
+        <button id="tut-tab-btn-2" onclick="switchTutTab(2)" class="pb-2.5 px-3 border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-1.5 transition">
+          <i class="fa-solid fa-lightbulb text-amber-400"></i>
+          <span data-i18n="tut_tab_pro">고난이도 필수 팁 (교집합)</span>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-5 overflow-y-auto space-y-5 text-xs sm:text-sm text-slate-300 custom-scroll leading-relaxed">
+        
+        <!-- TAB 1: BASIC RULES & 6-STEP EXAMPLE (우산 풀이) -->
+        <div id="tut-content-1" class="space-y-4">
+          <!-- 3 Basic Rules Box -->
+          <div class="bg-indigo-950/50 border border-indigo-700/40 rounded-xl p-3.5 space-y-2">
+            <h4 class="font-black text-indigo-300 text-sm flex items-center gap-2">
+              <i class="fa-solid fa-check-double text-indigo-400"></i>
+              <span data-i18n="tut_basic_header">기본 규칙 3가지</span>
+            </h4>
+            <ul class="space-y-1.5 text-slate-300 list-disc list-inside">
+              <li><strong class="text-white" data-i18n="tut_b1">1) 왼쪽과 위쪽 숫자는 연속해서 칠해져야 할 칸의 수</strong><span data-i18n="tut_b1_sub">를 의미합니다.</span></li>
+              <li><strong class="text-white" data-i18n="tut_b2">2) 여러 개의 숫자가 있을 때</strong><span data-i18n="tut_b2_sub">: 숫자와 숫자 사이는 반드시 최소 한 칸 이상을 띄우고 색칠합니다.</span></li>
+              <li><strong class="text-white" data-i18n="tut_b3">3) 칠할 수 없는 빈칸</strong><span data-i18n="tut_b3_sub">에는 X표시를 해두면 남은 칸을 쉽게 유추할 수 있습니다.</span></li>
+            </ul>
+          </div>
+
+          <!-- Step-by-Step 6 Stages Breakdown -->
+          <div>
+            <h4 class="font-black text-white text-sm mb-2.5 flex items-center gap-2">
+              <span class="w-5 h-5 rounded-md bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center text-[11px]">예</span>
+              <span data-i18n="tut_steps_title">5×5 우산 퍼즐로 배우는 6단계 풀이 과정</span>
+            </h4>
+
+            <!-- 2D Visual Demonstration Grid (1 to 6 steps exactly matching the image) -->
+            <div class="bg-[#0b0e17] border border-slate-700/80 rounded-2xl p-3 sm:p-4 mb-4 shadow-inner">
+              <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 justify-items-center">
+                
+                <!-- Diagram 1 -->
+                <div class="flex flex-col items-center">
+                  <div class="flex items-center gap-1.5 mb-1.5 self-start pl-1">
+                    <span class="text-rose-500 font-black text-base sm:text-lg">1.</span>
+                  </div>
+                  <div class="bg-white p-1 rounded-lg border border-slate-300 shadow-md inline-block select-none">
+                    <table class="border-collapse text-[9px] font-mono font-bold text-center">
+                      <tr>
+                        <td class="w-4 h-6 border-r-2 border-b-2 border-slate-600 bg-slate-50"></td>
+                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700">2</td>
+                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700"><div>3</div><div>1</div></td>
+                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700">5</td>
+                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700">3</td>
+                        <td class="w-4 h-6 border-b-2 border-slate-600 align-bottom pb-0.5 text-slate-700">2</td>
+                      </tr>
+                      <tr>
+                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">3</td>
+                        <td class="border border-slate-300 bg-white"></td>
+                        <td class="border border-slate-300 bg-white"></td>
+                        <td class="border border-slate-300 bg-slate-600"></td>
+                        <td class="border border-slate-300 bg-white"></td>
+                        <td class="border border-slate-300 bg-white"></td>
+                      </tr>
+                      <tr>
+                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">5</td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                        <td class="border border-slate-300 bg-slate-700"></td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                      </tr>
+                      <tr>
+                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">5</td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                        <td class="border border-slate-300 bg-slate-700"></td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                      </tr>
+                      <tr>
+                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">1</td>
+                        <td class="border border-slate-300 bg-white"></td>
+                        <td class="border border-slate-300 bg-white"></td>
+                        <td class="border border-slate-300 bg-slate-600"></td>
+                        <td class="border border-slate-300 bg-white"></td>
+                        <td class="border border-slate-300 bg-white"></td>
+                      </tr>
+                      <tr>
+                        <td class="h-4 border-r-2 border-slate-600 bg-slate-50 pr-1 text-right text-slate-700">2</td>
+                        <td class="border border-slate-300 bg-white"></td>
+                        <td class="border border-slate-300 bg-white"></td>
+                        <td class="border border-slate-300 bg-slate-600"></td>
+                        <td class="border border-slate-300 bg-white"></td>
+                        <td class="border border-slate-300 bg-white"></td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+
+                <!-- Diagram 2 -->
+                <div class="flex flex-col items-center">
+                  <div class="flex items-center gap-1.5 mb-1.5 self-start pl-1">
+                    <span class="text-rose-500 font-black text-base sm:text-lg">2.</span>
+                  </div>
+                  <div class="bg-white p-1 rounded-lg border border-slate-300 shadow-md inline-block select-none">
+                    <table class="border-collapse text-[9px] font-mono font-bold text-center">
+                      <tr>
+                        <td class="w-4 h-6 border-r-2 border-b-2 border-slate-600 bg-slate-50"></td>
+                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700">2</td>
+                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700"><div>3</div><div>1</div></td>
+                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700">5</td>
+                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700">3</td>
+                        <td class="w-4 h-6 border-b-2 border-slate-600 align-bottom pb-0.5 text-slate-700">2</td>
+                      </tr>
+                      <tr>
+                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">3</td>
+                        <td class="border border-slate-300 bg-white"></td>
+                        <td class="border border-slate-300 bg-white"></td>
+                        <td class="border border-slate-300 bg-slate-600"></td>
+                        <td class="border border-slate-300 bg-white"></td>
+                        <td class="border border-slate-300 bg-white"></td>
+                      </tr>
+                      <tr>
+                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">5</td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                        <td class="border border-slate-300 bg-slate-700"></td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                      </tr>
+                      <tr>
+                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">5</td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                        <td class="border border-slate-300 bg-slate-700"></td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                      </tr>
+                      <tr>
+                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">1</td>
+                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
+                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
+                        <td class="border border-slate-300 bg-slate-600"></td>
+                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
+                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
+                      </tr>
+                      <tr>
+                        <td class="h-4 border-r-2 border-slate-600 bg-slate-50 pr-1 text-right text-slate-700">2</td>
+                        <td class="border border-slate-300 bg-white"></td>
+                        <td class="border border-slate-300 bg-white"></td>
+                        <td class="border border-slate-300 bg-slate-600"></td>
+                        <td class="border border-slate-300 bg-white"></td>
+                        <td class="border border-slate-300 bg-white"></td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+
+                <!-- Diagram 3 -->
+                <div class="flex flex-col items-center">
+                  <div class="flex items-center gap-1.5 mb-1.5 self-start pl-1">
+                    <span class="text-rose-500 font-black text-base sm:text-lg">3.</span>
+                  </div>
+                  <div class="bg-white p-1 rounded-lg border border-slate-300 shadow-md inline-block select-none">
+                    <table class="border-collapse text-[9px] font-mono font-bold text-center">
+                      <tr>
+                        <td class="w-4 h-6 border-r-2 border-b-2 border-slate-600 bg-slate-50"></td>
+                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700">2</td>
+                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700"><div>3</div><div>1</div></td>
+                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700">5</td>
+                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700">3</td>
+                        <td class="w-4 h-6 border-b-2 border-slate-600 align-bottom pb-0.5 text-slate-700">2</td>
+                      </tr>
+                      <tr>
+                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">3</td>
+                        <td class="border border-slate-300 bg-white"></td>
+                        <td class="border border-slate-300 bg-white"></td>
+                        <td class="border border-slate-300 bg-slate-600"></td>
+                        <td class="border border-slate-300 bg-white"></td>
+                        <td class="border border-slate-300 bg-white"></td>
+                      </tr>
+                      <tr>
+                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">5</td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                        <td class="border border-slate-300 bg-slate-700"></td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                      </tr>
+                      <tr>
+                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">5</td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                        <td class="border border-slate-300 bg-slate-700"></td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                      </tr>
+                      <tr>
+                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">1</td>
+                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
+                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
+                        <td class="border border-slate-300 bg-slate-600"></td>
+                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
+                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
+                      </tr>
+                      <tr>
+                        <td class="h-4 border-r-2 border-slate-600 bg-slate-50 pr-1 text-right text-slate-700">2</td>
+                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
+                        <td class="border border-slate-300 bg-white"></td>
+                        <td class="border border-slate-300 bg-slate-600"></td>
+                        <td class="border border-slate-300 bg-white"></td>
+                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+
+                <!-- Diagram 4 -->
+                <div class="flex flex-col items-center">
+                  <div class="flex items-center gap-1.5 mb-1.5 self-start pl-1">
+                    <span class="text-rose-500 font-black text-base sm:text-lg">4.</span>
+                  </div>
+                  <div class="bg-white p-1 rounded-lg border border-slate-300 shadow-md inline-block select-none">
+                    <table class="border-collapse text-[9px] font-mono font-bold text-center">
+                      <tr>
+                        <td class="w-4 h-6 border-r-2 border-b-2 border-slate-600 bg-slate-50"></td>
+                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700">2</td>
+                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700"><div>3</div><div>1</div></td>
+                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700">5</td>
+                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700">3</td>
+                        <td class="w-4 h-6 border-b-2 border-slate-600 align-bottom pb-0.5 text-slate-700">2</td>
+                      </tr>
+                      <tr>
+                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">3</td>
+                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
+                        <td class="border border-slate-300 bg-white"></td>
+                        <td class="border border-slate-300 bg-slate-600"></td>
+                        <td class="border border-slate-300 bg-white"></td>
+                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
+                      </tr>
+                      <tr>
+                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">5</td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                        <td class="border border-slate-300 bg-slate-700"></td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                      </tr>
+                      <tr>
+                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">5</td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                        <td class="border border-slate-300 bg-slate-700"></td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                      </tr>
+                      <tr>
+                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">1</td>
+                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
+                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
+                        <td class="border border-slate-300 bg-slate-600"></td>
+                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
+                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
+                      </tr>
+                      <tr>
+                        <td class="h-4 border-r-2 border-slate-600 bg-slate-50 pr-1 text-right text-slate-700">2</td>
+                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
+                        <td class="border border-slate-300 bg-white"></td>
+                        <td class="border border-slate-300 bg-slate-600"></td>
+                        <td class="border border-slate-300 bg-white"></td>
+                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+
+                <!-- Diagram 5 -->
+                <div class="flex flex-col items-center">
+                  <div class="flex items-center gap-1.5 mb-1.5 self-start pl-1">
+                    <span class="text-rose-500 font-black text-base sm:text-lg">5.</span>
+                  </div>
+                  <div class="bg-white p-1 rounded-lg border border-slate-300 shadow-md inline-block select-none">
+                    <table class="border-collapse text-[9px] font-mono font-bold text-center">
+                      <tr>
+                        <td class="w-4 h-6 border-r-2 border-b-2 border-slate-600 bg-slate-50"></td>
+                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700">2</td>
+                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700"><div>3</div><div>1</div></td>
+                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700">5</td>
+                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700">3</td>
+                        <td class="w-4 h-6 border-b-2 border-slate-600 align-bottom pb-0.5 text-slate-700">2</td>
+                      </tr>
+                      <tr>
+                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">3</td>
+                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                        <td class="border border-slate-300 bg-slate-600"></td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
+                      </tr>
+                      <tr>
+                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">5</td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                        <td class="border border-slate-300 bg-slate-700"></td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                      </tr>
+                      <tr>
+                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">5</td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                        <td class="border border-slate-300 bg-slate-700"></td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                      </tr>
+                      <tr>
+                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">1</td>
+                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
+                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
+                        <td class="border border-slate-300 bg-slate-600"></td>
+                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
+                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
+                      </tr>
+                      <tr>
+                        <td class="h-4 border-r-2 border-slate-600 bg-slate-50 pr-1 text-right text-slate-700">2</td>
+                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
+                        <td class="border border-slate-300 bg-white"></td>
+                        <td class="border border-slate-300 bg-slate-600"></td>
+                        <td class="border border-slate-300 bg-white"></td>
+                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+
+                <!-- Diagram 6 -->
+                <div class="flex flex-col items-center">
+                  <div class="flex items-center gap-1.5 mb-1.5 self-start pl-1">
+                    <span class="text-rose-500 font-black text-base sm:text-lg">6.</span>
+                  </div>
+                  <div class="bg-white p-1 rounded-lg border border-slate-300 shadow-md inline-block select-none">
+                    <table class="border-collapse text-[9px] font-mono font-bold text-center">
+                      <tr>
+                        <td class="w-4 h-6 border-r-2 border-b-2 border-slate-600 bg-slate-50"></td>
+                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700">2</td>
+                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700"><div>3</div><div>1</div></td>
+                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700">5</td>
+                        <td class="w-4 h-6 border-r border-b-2 border-slate-300 border-b-slate-600 align-bottom pb-0.5 text-slate-700">3</td>
+                        <td class="w-4 h-6 border-b-2 border-slate-600 align-bottom pb-0.5 text-slate-700">2</td>
+                      </tr>
+                      <tr>
+                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">3</td>
+                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                        <td class="border border-slate-300 bg-slate-600"></td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
+                      </tr>
+                      <tr>
+                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">5</td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                        <td class="border border-slate-300 bg-slate-700"></td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                      </tr>
+                      <tr>
+                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">5</td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                        <td class="border border-slate-300 bg-slate-700"></td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                      </tr>
+                      <tr>
+                        <td class="h-4 border-r-2 border-b border-slate-600 border-b-slate-300 bg-slate-50 pr-1 text-right text-slate-700">1</td>
+                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
+                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
+                        <td class="border border-slate-300 bg-slate-600"></td>
+                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
+                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
+                      </tr>
+                      <tr>
+                        <td class="h-4 border-r-2 border-slate-600 bg-slate-50 pr-1 text-right text-slate-700">2</td>
+                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
+                        <td class="border border-slate-300 bg-slate-500"></td>
+                        <td class="border border-slate-300 bg-slate-600"></td>
+                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
+                        <td class="border border-slate-300 text-sky-600 font-extrabold">✕</td>
+                      </tr>
+                    </table>
+                  </div>
+                  <span class="mt-2 text-xs font-black text-amber-400 tracking-wide" data-i18n="tut_umbrella_done">우산 완성!</span>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+              <!-- Step 1 -->
+              <div class="bg-[#0f1320] border border-slate-700/70 rounded-xl p-3">
+                <span class="inline-block px-2 py-0.5 rounded bg-rose-950 text-rose-300 font-black text-[11px] mb-1">1단계</span>
+                <p class="font-bold text-slate-100 text-xs" data-i18n="tut_s1_t">가장 큰 숫자 라인부터 공략!</p>
+                <p class="text-[11px] text-slate-400 mt-1 leading-normal" data-i18n="tut_s1_d">5×5 퍼즐에서 '5'로 표시된 가로 2·3번째 줄, 세로 3번째 줄은 5칸 전체를 빈틈없이 다 색칠합니다.</p>
+              </div>
+
+              <!-- Step 2 -->
+              <div class="bg-[#0f1320] border border-slate-700/70 rounded-xl p-3">
+                <span class="inline-block px-2 py-0.5 rounded bg-rose-950 text-rose-300 font-black text-[11px] mb-1">2단계</span>
+                <p class="font-bold text-slate-100 text-xs" data-i18n="tut_s2_t">완성된 줄의 나머지 칸에 X 표시</p>
+                <p class="text-[11px] text-slate-400 mt-1 leading-normal" data-i18n="tut_s2_d">1단계를 마치면 가로 4번째 줄의 '1'이 이미 채워졌으므로 그 줄의 나머지 모든 칸에 X를 표시합니다.</p>
+              </div>
+
+              <!-- Step 3 -->
+              <div class="bg-[#0f1320] border border-slate-700/70 rounded-xl p-3">
+                <span class="inline-block px-2 py-0.5 rounded bg-rose-950 text-rose-300 font-black text-[11px] mb-1">3단계</span>
+                <p class="font-bold text-slate-100 text-xs" data-i18n="tut_s3_t">불가능한 위치 판별 후 X 표시</p>
+                <p class="text-[11px] text-slate-400 mt-1 leading-normal" data-i18n="tut_s3_d">5번째 가로줄은 '2'칸 연속이어야 하는데, 가운데가 이미 칠해졌으므로 맨 앞칸과 맨 뒷칸에는 올 수 없어 X 표시합니다.</p>
+              </div>
+
+              <!-- Step 4 -->
+              <div class="bg-[#0f1320] border border-slate-700/70 rounded-xl p-3">
+                <span class="inline-block px-2 py-0.5 rounded bg-rose-950 text-rose-300 font-black text-[11px] mb-1">4단계</span>
+                <p class="font-bold text-slate-100 text-xs" data-i18n="tut_s4_t">세로줄 완성 확인 및 상단 X</p>
+                <p class="text-[11px] text-slate-400 mt-1 leading-normal" data-i18n="tut_s4_d">세로 1번째, 5번째 줄의 '2'가 만족되었으므로 그 위의 빈 영역(가로 1번째 줄의 양 끝)에 X를 칩니다.</p>
+              </div>
+
+              <!-- Step 5 -->
+              <div class="bg-[#0f1320] border border-slate-700/70 rounded-xl p-3">
+                <span class="inline-block px-2 py-0.5 rounded bg-rose-950 text-rose-300 font-black text-[11px] mb-1">5단계</span>
+                <p class="font-bold text-slate-100 text-xs" data-i18n="tut_s5_t">남은 칸 수와 힌트 일치 시 색칠</p>
+                <p class="text-[11px] text-slate-400 mt-1 leading-normal" data-i18n="tut_s5_d">가로 1번째 줄의 힌트는 '3'인데 빈칸이 딱 3칸만 남았으므로 가운데 3칸을 칠해 완성합니다.</p>
+              </div>
+
+              <!-- Step 6 -->
+              <div class="bg-[#0f1320] border border-slate-700/70 rounded-xl p-3">
+                <span class="inline-block px-2 py-0.5 rounded bg-rose-950 text-rose-300 font-black text-[11px] mb-1">6단계</span>
+                <p class="font-bold text-slate-100 text-xs" data-i18n="tut_s6_t">마지막 단서 적용 → '우산' 완성!</p>
+                <p class="text-[11px] text-slate-400 mt-1 leading-normal" data-i18n="tut_s6_d">세로 2번째(단서 1)와 4번째(단서 3) 숫자를 대조하여 손잡이 부분을 색칠하면 예쁜 우산이 완성됩니다!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: PRO TIPS (고난이도 양끝 밀기 & 교집합 겹침 법칙) -->
+        <div id="tut-content-2" class="hidden space-y-4">
+          <div class="bg-amber-950/40 border border-amber-600/50 rounded-xl p-4">
+            <h4 class="font-black text-amber-300 text-sm flex items-center gap-2 mb-1.5">
+              <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i>
+              <span data-i18n="tut_pro_head">고난이도 문제에서 쓸 수 있는 핵심 팁!</span>
+            </h4>
+            <p class="text-xs text-slate-300" data-i18n="tut_pro_sub">
+              난이도가 높아질수록 퍼즐의 칸 수가 많아져 단번에 끝까지 채워지는 줄이 줄어듭니다. 이 때는 <strong class="text-white underline decoration-amber-400 underline-offset-2">양 끝에서부터 최대한 밀어붙였을 때 겹치는 칸(교집합)</strong>을 찾아 먼저 칠해야 합니다!
+            </p>
+          </div>
+
+          <!-- Visual Intersection Diagram (10칸 예시: 1, 4, 2) -->
+          <div class="bg-[#0d0f17] border border-slate-700 rounded-xl p-4">
+            <div class="flex items-center justify-between pb-2 mb-3 border-b border-slate-800">
+              <span class="font-bold text-indigo-300 text-xs" data-i18n="tut_diagram_title">📌 10칸 줄에서 단서가 [1, 4, 2] 일 때 분석 예시</span>
+              <span class="px-2 py-0.5 bg-slate-800 text-[10px] text-slate-400 rounded">10×10 ~ 20×20 응용</span>
+            </div>
+
+            <!-- Diagram Graphic Layout -->
+            <div class="flex flex-col sm:flex-row items-center justify-around gap-4 py-2 font-mono text-[11px]">
+              
+              <!-- Column 1: Top Aligned -->
+              <div class="flex flex-col items-center">
+                <span class="text-slate-400 mb-1 text-[11px] font-sans" data-i18n="tut_align_top">맨 위부터 밀어붙일 때</span>
+                <div class="text-indigo-400 font-bold mb-1">1 · 4 · 2</div>
+                <div class="border-2 border-slate-600 bg-white rounded flex flex-col w-7 overflow-hidden text-center">
+                  <div class="h-5 bg-slate-900 text-white font-bold flex items-center justify-center">1</div>
+                  <div class="h-5 text-rose-500 font-bold flex items-center justify-center border-t border-slate-300">X</div>
+                  <div class="h-5 bg-slate-900 text-white font-bold flex items-center justify-center border-t border-slate-300">4</div>
+                  <div class="h-5 bg-slate-900 text-white font-bold flex items-center justify-center border-t border-slate-300">4</div>
+                  <div class="h-5 bg-slate-900 text-white font-bold flex items-center justify-center border-t border-slate-300">4</div>
+                  <div class="h-5 bg-slate-900 text-white font-bold flex items-center justify-center border-t border-slate-300">4</div>
+                  <div class="h-5 text-rose-500 font-bold flex items-center justify-center border-t border-slate-300">X</div>
+                  <div class="h-5 bg-slate-900 text-white font-bold flex items-center justify-center border-t border-slate-300">2</div>
+                  <div class="h-5 bg-slate-900 text-white font-bold flex items-center justify-center border-t border-slate-300">2</div>
+                  <div class="h-5 bg-slate-100 border-t border-slate-300"></div>
+                </div>
+              </div>
+
+              <!-- Overlap Sign -->
+              <div class="text-2xl text-amber-400 font-bold flex flex-col items-center">
+                <span>∩</span>
+                <span class="text-[10px] text-slate-400 font-sans" data-i18n="tut_overlap_label">교집합</span>
+              </div>
+
+              <!-- Column 2: Bottom Aligned -->
+              <div class="flex flex-col items-center">
+                <span class="text-slate-400 mb-1 text-[11px] font-sans" data-i18n="tut_align_bottom">맨 아래부터 밀어붙일 때</span>
+                <div class="text-indigo-400 font-bold mb-1">1 · 4 · 2</div>
+                <div class="border-2 border-slate-600 bg-white rounded flex flex-col w-7 overflow-hidden text-center">
+                  <div class="h-5 bg-slate-100"></div>
+                  <div class="h-5 bg-slate-900 text-white font-bold flex items-center justify-center border-t border-slate-300">1</div>
+                  <div class="h-5 text-rose-500 font-bold flex items-center justify-center border-t border-slate-300">X</div>
+                  <div class="h-5 bg-slate-900 text-white font-bold flex items-center justify-center border-t border-slate-300">4</div>
+                  <div class="h-5 bg-slate-900 text-white font-bold flex items-center justify-center border-t border-slate-300">4</div>
+                  <div class="h-5 bg-slate-900 text-white font-bold flex items-center justify-center border-t border-slate-300">4</div>
+                  <div class="h-5 bg-slate-900 text-white font-bold flex items-center justify-center border-t border-slate-300">4</div>
+                  <div class="h-5 text-rose-500 font-bold flex items-center justify-center border-t border-slate-300">X</div>
+                  <div class="h-5 bg-slate-900 text-white font-bold flex items-center justify-center border-t border-slate-300">2</div>
+                  <div class="h-5 bg-slate-900 text-white font-bold flex items-center justify-center border-t border-slate-300">2</div>
+                </div>
+              </div>
+
+              <!-- Arrow -->
+              <div class="text-2xl text-emerald-400 font-bold">➔</div>
+
+              <!-- Column 3: Inevitable Overlap Result -->
+              <div class="flex flex-col items-center">
+                <span class="text-emerald-400 font-bold mb-1 text-[11px] font-sans" data-i18n="tut_result_overlap">★ 반드시 겹치는 칸 확정!</span>
+                <div class="text-emerald-400 font-bold mb-1" data-i18n="tut_must_fill">색칠 확정 칸</div>
+                <div class="border-2 border-emerald-500 bg-white rounded flex flex-col w-7 overflow-hidden text-center shadow-lg shadow-emerald-950/60 ring-2 ring-emerald-500/40">
+                  <div class="h-5 bg-slate-100"></div>
+                  <div class="h-5 bg-slate-100 border-t border-slate-300"></div>
+                  <div class="h-5 bg-slate-100 border-t border-slate-300"></div>
+                  <!-- Overlapped 4 block (3 cells overlap!) -->
+                  <div class="h-5 bg-emerald-600 text-white font-black flex items-center justify-center border-t border-slate-300">●</div>
+                  <div class="h-5 bg-emerald-600 text-white font-black flex items-center justify-center border-t border-slate-300">●</div>
+                  <div class="h-5 bg-emerald-600 text-white font-black flex items-center justify-center border-t border-slate-300">●</div>
+                  <div class="h-5 bg-slate-100 border-t border-slate-300"></div>
+                  <div class="h-5 bg-slate-100 border-t border-slate-300"></div>
+                  <!-- Overlapped 2 block (1 cell overlaps!) -->
+                  <div class="h-5 bg-emerald-600 text-white font-black flex items-center justify-center border-t border-slate-300">●</div>
+                  <div class="h-5 bg-slate-100 border-t border-slate-300"></div>
+                </div>
+              </div>
+
+            </div>
+
+            <p class="text-slate-400 text-[11px] mt-3 leading-relaxed" data-i18n="tut_pro_explanation">
+              위 예시처럼 '맨 위에서 채웠을 때'와 '맨 아래에서 채웠을 때' 같은 숫자 그룹이 중복으로 차지하는 칸(● 표시된 총 4칸)은 어떤 상황에서도 무조건 칠해져야 하는 절대적인 칸입니다. 이 칸들을 먼저 칠하고 나면 직교하는 다른 줄들의 강력한 힌트가 됩니다!
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-3 bg-[#0d0f17] border-t border-slate-800 flex items-center justify-between">
+        <span class="text-[11px] text-slate-500 pl-2">Kwangsan Middle School Logic Lab</span>
+        <button onclick="closeTutorialModal()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl shadow transition">
+          <span data-i18n="btn_confirm">확인했습니다</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= SUCCESS MODAL ================= -->
+  <div id="success-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-[#141824] rounded-2xl max-w-sm w-full p-6 text-center space-y-4 shadow-2xl border border-emerald-500/50 animate-in fade-in zoom-in-95 duration-200">
+      
+      <div class="w-16 h-16 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center text-3xl mx-auto">
+        <i class="fa-solid fa-trophy"></i>
+      </div>
+
+      <div class="space-y-1">
+        <h3 class="text-xl font-extrabold text-white" data-i18n="modal_success_title">정답입니다! 완벽해요!</h3>
+        <p class="text-xs text-slate-300" id="success-stage-name">스테이지를 멋지게 클리어했습니다.</p>
+      </div>
+
+      <div class="pt-2 flex flex-col gap-2">
+        <button onclick="handleNextStageFromModal()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-sky-500 text-white font-extrabold text-xs shadow-md transition active:scale-95">
+          <span data-i18n="modal_next_btn">다음 스테이지 도전</span>
+        </button>
+        <button onclick="closeSuccessModal()" class="w-full py-2 rounded-xl bg-slate-800 text-slate-300 font-bold text-xs hover:bg-slate-700 transition">
+          <span data-i18n="modal_close_btn">퍼즐 계속 보기</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= TOAST NOTIFICATION ================= -->
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-slate-900/95 border border-slate-700 text-white px-4 py-2.5 rounded-xl shadow-2xl text-xs font-bold transition-all duration-300 opacity-0 pointer-events-none transform translate-y-3 flex items-center gap-2">
+    <i id="toast-icon" class="fa-solid fa-circle-info text-indigo-400"></i>
+    <span id="toast-message">알림</span>
+  </div>
+
+  <!-- ================= JAVASCRIPT LOGIC ================= -->
+  <script>
+    /* ========================================================
+       1. GLOBAL STATE & STAGES (TOTAL 12 STAGES)
+       ======================================================== */
+    let currentStudent = { id: "", name: "" };
+    let currentLanguage = 'ko'; // 'ko' | 'en' | 'zh' | 'ru'
+    let currentStageIndex = 0;
+    let toolMode = 'fill'; // 'fill' | 'mark'
+    let isMouseDown = false;
+    let dragAction = null; // 'fill' | 'mark' | 'empty'
+    let userGrid = []; // 2D Array: 0 (empty), 1 (filled), 2 (marked X)
+    let clearedStages = new Set(); // Stores indices of cleared stages
+
+    /* Multilingual Dictionary: Korean is Base, Sub-language attached */
+    const translations = {
+      badge_change: {
+        ko: "[학생 변경]",
+        en: "[Change Student]",
+        zh: "[更换学生]",
+        ru: "[Сменить]"
+      },
+      btn_tutorial: {
+        ko: "튜토리얼",
+        en: "Tutorial",
+        zh: "教程",
+        ru: "Обучение"
+      },
+      tut_tab_basic: {
+        ko: "기본 규칙 & 단계별 풀이",
+        en: "Basic Rules & 6-Step Guide",
+        zh: "基础规则与6步解析",
+        ru: "Основные правила и шаги"
+      },
+      tut_tab_pro: {
+        ko: "고난이도 필수 팁 (교집합)",
+        en: "Pro Solving Tips (Overlap)",
+        zh: "高阶通关技巧 (重叠交集)",
+        ru: "Советы для сложных уровней"
+      },
+      tut_basic_header: {
+        ko: "기본 규칙 3가지",
+        en: "3 Fundamental Rules",
+        zh: "3项基本规则",
+        ru: "3 базовых правила"
+      },
+      tut_b1: {
+        ko: "1) 왼쪽과 위쪽 숫자는 연속해서 칠해져야 할 칸의 수",
+        en: "1) Numbers show the count of consecutive filled cells",
+        zh: "1) 左侧和上方的数字表示必须连续涂黑的格数",
+        ru: "1) Числа указывают количество непрерывно закрашенных клеток"
+      },
+      tut_b1_sub: {
+        ko: "를 의미합니다.",
+        en: ".",
+        zh: "。",
+        ru: "."
+      },
+      tut_b2: {
+        ko: "2) 여러 개의 숫자가 있을 때",
+        en: "2) When there are multiple numbers",
+        zh: "2) 当一行有多个数字时",
+        ru: "2) При наличии нескольких чисел"
+      },
+      tut_b2_sub: {
+        ko: ": 숫자와 숫자 사이는 반드시 최소 한 칸 이상을 띄우고 색칠합니다.",
+        en: ": There must be at least one empty tile between groups.",
+        zh: ": 组与组之间必须至少间隔一个空格。",
+        ru: ": между группами должен оставаться минимум один пробел."
+      },
+      tut_b3: {
+        ko: "3) 칠할 수 없는 빈칸",
+        en: "3) Definitely empty cells",
+        zh: "3) 确定不涂色的空格",
+        ru: "3) Точно пустые клетки"
+      },
+      tut_b3_sub: {
+        ko: "에는 X표시를 해두면 남은 칸을 쉽게 유추할 수 있습니다.",
+        en: ": Mark with an X to easily deduce the remaining cells.",
+        zh: "：打上 X 标记可以更轻松推导出剩余的格子。",
+        ru: ": помечайте крестиком (X) для облегчения поиска."
+      },
+      tut_steps_title: {
+        ko: "5×5 우산 퍼즐로 배우는 6단계 풀이 과정",
+        en: "6-Step Solving Process (5×5 Umbrella Puzzle)",
+        zh: "通过 5×5 雨伞拼图学习的 6 步解题法",
+        ru: "6 шагов решения на примере зонтика 5×5"
+      },
+      tut_umbrella_done: {
+        ko: "우산 완성!",
+        en: "Umbrella complete!",
+        zh: "雨伞完成！",
+        ru: "Зонтик готов!"
+      },
+      tut_s1_t: {
+        ko: "가장 큰 숫자 라인부터 공략!",
+        en: "Start with the largest numbers!",
+        zh: "从最大的数字行/列开始入手！",
+        ru: "Начните с самых больших чисел!"
+      },
+      tut_s1_d: {
+        ko: "5×5 퍼즐에서 '5'로 표시된 가로 2·3번째 줄, 세로 3번째 줄은 5칸 전체를 빈틈없이 다 색칠합니다.",
+        en: "In a 5×5 puzzle, rows/cols marked '5' are completely filled across all 5 cells.",
+        zh: "在 5×5 拼图中，标有 '5' 的行与列将全部 5 格涂满，毫无悬念。",
+        ru: "В пазле 5×5 линии с числом 5 закрашиваются целиком."
+      },
+      tut_s2_t: {
+        ko: "완성된 줄의 나머지 칸에 X 표시",
+        en: "Mark completed lines with X",
+        zh: "在已满足条件的剩余格子打 X",
+        ru: "Ставьте X в законченных линиях"
+      },
+      tut_s2_d: {
+        ko: "1단계를 마치면 가로 4번째 줄의 '1'이 이미 채워졌으므로 그 줄의 나머지 모든 칸에 X를 표시합니다.",
+        en: "Once row 4's clue '1' is satisfied by step 1, mark all its other cells with X.",
+        zh: "第1步完成后，第4行的 '1' 已经就位，故该行其余所有空格都标记为 X。",
+        ru: "Если число 1 в 4-й строке заполнено, остальные клетки отмечаем X."
+      },
+      tut_s3_t: {
+        ko: "불가능한 위치 판별 후 X 표시",
+        en: "Identify impossible spots and mark X",
+        zh: "排除不可能的位置并打 X",
+        ru: "Отмечайте X невозможные места"
+      },
+      tut_s3_d: {
+        ko: "5번째 가로줄은 '2'칸 연속이어야 하는데, 가운데가 이미 칠해졌으므로 맨 앞칸과 맨 뒷칸에는 올 수 없어 X 표시합니다.",
+        en: "Row 5 needs 2 consecutive cells with center filled, so edges cannot be filled.",
+        zh: "第5行需要连续 2 格且中心已涂色，因此两侧最外边缘绝不可能涂色，直接打 X。",
+        ru: "5-я строка требует 2 клетки; зная центр, края точно отмечаем X."
+      },
+      tut_s4_t: {
+        ko: "세로줄 완성 확인 및 상단 X",
+        en: "Verify columns and mark top X",
+        zh: "检查列条件并将顶部打 X",
+        ru: "Проверка колонок и X сверху"
+      },
+      tut_s4_d: {
+        ko: "세로 1번째, 5번째 줄의 '2'가 만족되었으므로 그 위의 빈 영역(가로 1번째 줄의 양 끝)에 X를 칩니다.",
+        en: "Columns 1 and 5 have their '2's fulfilled, so mark X on the empty top corners.",
+        zh: "第1列和第5列的 '2' 已满足，将上方的第一行两侧空白格打 X。",
+        ru: "Столбцы 1 и 5 выполнены, отмечаем верхние углы крестиком."
+      },
+      tut_s5_t: {
+        ko: "남은 칸 수와 힌트 일치 시 색칠",
+        en: "Fill when remaining cells equal clue",
+        zh: "剩余空格恰好等于数字时直接涂色",
+        ru: "Закрасьте оставшиеся клетки"
+      },
+      tut_s5_d: {
+        ko: "가로 1번째 줄의 힌트는 '3'인데 빈칸이 딱 3칸만 남았으므로 가운데 3칸을 칠해 완성합니다.",
+        en: "Row 1 clue is '3' and exactly 3 cells remain, so fill them all.",
+        zh: "第1行线索为 '3'，此时正好只剩下 3 个空格，全部填涂即可！",
+        ru: "В 1-й строке подсказка 3 и осталось ровно 3 клетки — закрашиваем."
+      },
+      tut_s6_t: {
+        ko: "마지막 단서 적용 → '우산' 완성!",
+        en: "Final clues applied → Umbrella complete!",
+        zh: "应用最后线索 → 雨伞顺利完成！",
+        ru: "Финал → Зонтик готов!"
+      },
+      tut_s6_d: {
+        ko: "세로 2번째(단서 1)와 4번째(단서 3) 숫자를 대조하여 손잡이 부분을 색칠하면 예쁜 우산이 완성됩니다!",
+        en: "Cross-reference col 2 (clue 1) and col 4 (clue 3) to fill the handle and complete the umbrella!",
+        zh: "核对第2列(线索1)与第4列(线索3)，涂黑手柄部分，雨伞图案大功告成！",
+        ru: "Сверьте столбцы 2 и 4 для ручки — и зонтик готов!"
+      },
+      tut_pro_head: {
+        ko: "고난이도 문제에서 쓸 수 있는 핵심 팁!",
+        en: "Essential Pro Tip for Hard Puzzles!",
+        zh: "高难度关卡必学核心秘诀！",
+        ru: "Главный секрет сложных уровней!"
+      },
+      tut_pro_sub: {
+        ko: "난이도가 높아질수록 퍼즐의 칸 수가 많아져 단번에 끝까지 채워지는 줄이 줄어듭니다. 이 때는 양 끝에서부터 최대한 밀어붙였을 때 겹치는 칸(교집합)을 찾아 먼저 칠해야 합니다!",
+        en: "On larger grids, find guaranteed cells by overlapping lines pushed to both extreme ends!",
+        zh: "网格越大，能直接全填的行越少。此时先从两端分别向内推挤，找出重叠交集的必填格！",
+        ru: "На больших сетках сдвигайте блоки к обоим краям и находите их гарантированное пересечение!"
+      },
+      tut_diagram_title: {
+        ko: "📌 10칸 줄에서 단서가 [1, 4, 2] 일 때 분석 예시",
+        en: "📌 Analysis Example: 10-cell line with clues [1, 4, 2]",
+        zh: "📌 10格线索为 [1, 4, 2] 时的推导示例",
+        ru: "📌 Пример: линия из 10 клеток с подсказкой [1, 4, 2]"
+      },
+      tut_align_top: {
+        ko: "맨 위부터 밀어붙일 때",
+        en: "Pushed to the top",
+        zh: "从最顶端向内排布",
+        ru: "Прижато к верхнему краю"
+      },
+      tut_align_bottom: {
+        ko: "맨 아래부터 밀어붙일 때",
+        en: "Pushed to the bottom",
+        zh: "从最底端向内排布",
+        ru: "Прижато к нижнему краю"
+      },
+      tut_overlap_label: {
+        ko: "교집합",
+        en: "Intersection",
+        zh: "重叠交集",
+        ru: "Пересечение"
+      },
+      tut_result_overlap: {
+        ko: "★ 반드시 겹치는 칸 확정!",
+        en: "★ Overlapped Cells Confirmed!",
+        zh: "★ 必然重叠格子锁定！",
+        ru: "★ Гарантированные клетки!"
+      },
+      tut_must_fill: {
+        ko: "색칠 확정 칸",
+        en: "Guaranteed Fills",
+        zh: "确定涂色格子",
+        ru: "Точно закрашивать"
+      },
+      tut_pro_explanation: {
+        ko: "위 예시처럼 '맨 위에서 채웠을 때'와 '맨 아래에서 채웠을 때' 같은 숫자 그룹이 중복으로 차지하는 칸(● 표시된 총 4칸)은 어떤 상황에서도 무조건 칠해져야 하는 절대적인 칸입니다. 이 칸들을 먼저 칠하고 나면 직교하는 다른 줄들의 강력한 힌트가 됩니다!",
+        en: "Cells that overlap regardless of whether groups are pushed to the top or bottom MUST be filled. Marking these opens up immediate breakthroughs for perpendicular rows!",
+        zh: "无论从顶端还是底端排布，同一数字块重叠占用的格子(共4格)是绝对必涂的。优先填入这些交集格，将成为解锁交叉行列的关键突破口！",
+        ru: "Клетки, в которых блоки перекрываются при обоих крайних положениях, гарантированно закрашиваются. Они служат ключом к решению соседних линий!"
+      },
+      login_title: {
+        ko: "관산중학교 학생 확인",
+        en: "Student Verification",
+        zh: "冠山中学学生认证",
+        ru: "Вход для учащихся"
+      },
+      login_desc: {
+        ko: "학번과 이름을 입력하고 퍼즐을 시작하세요.",
+        en: "Enter your Student ID and Name to begin.",
+        zh: "请输入学号与姓名后开始游戏。",
+        ru: "Введите номер и имя для входа."
+      },
+      login_stuid_label: {
+        ko: "학번 (예: 20315)",
+        en: "Student ID (e.g. 20315)",
+        zh: "学号 (例如: 20315)",
+        ru: "Номер билета (напр. 20315)"
+      },
+      login_name_label: {
+        ko: "이름",
+        en: "Name",
+        zh: "姓名",
+        ru: "Имя"
+      },
+      login_btn: {
+        ko: "퍼즐 게임 시작하기",
+        en: "Start Puzzle",
+        zh: "开始解题",
+        ru: "Начать игру"
+      },
+      nav_stage_select: {
+        ko: "스테이지 선택 및 달성 현황",
+        en: "Stage Selection & Progress",
+        zh: "关卡选择与通关进度",
+        ru: "Выбор уровня и прогресс"
+      },
+      diff_novice: {
+        ko: "초급 (5×5)",
+        en: "Novice (5×5)",
+        zh: "初级 (5×5)",
+        ru: "Новичок (5×5)"
+      },
+      diff_medium: {
+        ko: "중급 (10×10)",
+        en: "Medium (10×10)",
+        zh: "中级 (10×10)",
+        ru: "Средний (10×10)"
+      },
+      diff_hard: {
+        ko: "상급 (15×15)",
+        en: "Hard (15×15)",
+        zh: "高级 (15×15)",
+        ru: "Сложный (15×15)"
+      },
+      diff_expert: {
+        ko: "고급 (20×20)",
+        en: "Expert (20×20)",
+        zh: "专家 (20×20)",
+        ru: "Эксперт (20×20)"
+      },
+      label_touch_mode: {
+        ko: "조작 모드:",
+        en: "Tool Mode:",
+        zh: "操作模式:",
+        ru: "Режим:"
+      },
+      mode_fill: {
+        ko: "칠하기",
+        en: "Fill",
+        zh: "涂黑",
+        ru: "Закрасить"
+      },
+      mode_mark: {
+        ko: "X 표시",
+        en: "Mark X",
+        zh: "标X",
+        ru: "Крестик"
+      },
+      btn_reset: {
+        ko: "초기화",
+        en: "Reset",
+        zh: "重置",
+        ru: "Сброс"
+      },
+      tip_pc: {
+        ko: "PC: 좌클릭 = 칠하기 | 우클릭 = X표시",
+        en: "PC: Left click = Fill | Right click = X",
+        zh: "PC: 左键 = 涂色 | 右键 = X标记",
+        ru: "ПК: ЛКМ = Закрасить | ПКМ = X"
+      },
+      tip_mobile: {
+        ko: "모바일: 상단 모드 선택 후 탭 또는 드래그",
+        en: "Mobile: Select mode above & tap/drag",
+        zh: "移动端: 选择上方模式后点击或拖动",
+        ru: "Мобильный: выберите режим и нажимайте"
+      },
+      btn_check: {
+        ko: "정답 확인",
+        en: "Check Answer",
+        zh: "核对答案",
+        ru: "Проверить ответ"
+      },
+      tut_title: {
+        ko: "네모로직 퍼즐 규칙",
+        en: "Nonogram Rules",
+        zh: "数织逻辑规则",
+        ru: "Правила Нонограмм"
+      },
+      btn_confirm: {
+        ko: "확인했습니다",
+        en: "Got it",
+        zh: "我知道了",
+        ru: "Понятно"
+      },
+      modal_success_title: {
+        ko: "정답입니다! 완벽해요!",
+        en: "Correct! Outstanding!",
+        zh: "完全正确！恭喜通关！",
+        ru: "Правильно! Отлично!"
+      },
+      modal_next_btn: {
+        ko: "다음 스테이지 도전",
+        en: "Next Stage",
+        zh: "挑战下一关",
+        ru: "Следующий уровень"
+      },
+      modal_close_btn: {
+        ko: "퍼즐 계속 보기",
+        en: "Keep Viewing",
+        zh: "留在当前关卡",
+        ru: "Остаться здесь"
+      }
+    };
+
+    /* 12 STAGES CONFIGURATION */
+    const stages = [
+      /* --- 초급 (5x5, 3 Questions) --- */
+      {
+        id: 1,
+        title: { ko: "하트", en: "Heart", zh: "爱心", ru: "Сердце" },
+        difficulty: "novice",
+        size: 5,
+        solution: [
+          [0, 1, 0, 1, 0],
+          [1, 1, 1, 1, 1],
+          [1, 1, 1, 1, 1],
+          [0, 1, 1, 1, 0],
+          [0, 0, 1, 0, 0]
+        ]
+      },
+      {
+        id: 2,
+        title: { ko: "스마일", en: "Smile", zh: "笑脸", ru: "Смайлик" },
+        difficulty: "novice",
+        size: 5,
+        solution: [
+          [1, 0, 0, 0, 1],
+          [0, 0, 0, 0, 0],
+          [1, 0, 0, 0, 1],
+          [0, 1, 1, 1, 0],
+          [0, 0, 0, 0, 0]
+        ]
+      },
+      {
+        id: 3,
+        title: { ko: "작은 별", en: "Small Star", zh: "小星星", ru: "Звёздочка" },
+        difficulty: "novice",
+        size: 5,
+        solution: [
+          [0, 0, 1, 0, 0],
+          [1, 1, 1, 1, 1],
+          [0, 1, 1, 1, 0],
+          [1, 0, 0, 0, 1],
+          [0, 0, 0, 0, 0]
+        ]
+      },
+
+      /* --- 중급 (10x10, 3 Questions) --- */
+      {
+        id: 4,
+        title: { ko: "닻 (Anchor)", en: "Anchor", zh: "船锚", ru: "Якорь" },
+        difficulty: "medium",
+        size: 10,
+        solution: [
+          [0, 0, 0, 1, 1, 1, 1, 0, 0, 0],
+          [0, 0, 0, 1, 0, 0, 1, 0, 0, 0],
+          [0, 0, 0, 1, 1, 1, 1, 0, 0, 0],
+          [0, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+          [0, 0, 0, 0, 1, 1, 0, 0, 0, 0],
+          [0, 0, 0, 0, 1, 1, 0, 0, 0, 0],
+          [1, 0, 0, 0, 1, 1, 0, 0, 0, 1],
+          [1, 1, 0, 0, 1, 1, 0, 0, 1, 1],
+          [0, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+          [0, 0, 1, 1, 1, 1, 1, 1, 0, 0]
+        ]
+      },
+      {
+        id: 5,
+        title: { ko: "음표", en: "Music Note", zh: "音符", ru: "Нота" },
+        difficulty: "medium",
+        size: 10,
+        solution: [
+          [0, 0, 0, 0, 1, 1, 1, 1, 1, 1],
+          [0, 0, 0, 0, 1, 1, 1, 1, 1, 1],
+          [0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+          [0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+          [0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+          [0, 1, 1, 0, 1, 0, 1, 1, 0, 1],
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+          [0, 1, 1, 1, 0, 0, 1, 1, 1, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        ]
+      },
+      {
+        id: 6,
+        title: { ko: "아늑한 집", en: "Cozy House", zh: "温馨小屋", ru: "Домик" },
+        difficulty: "medium",
+        size: 10,
+        solution: [
+          [0, 0, 0, 0, 1, 1, 0, 0, 0, 0],
+          [0, 0, 0, 1, 1, 1, 1, 0, 0, 0],
+          [0, 0, 1, 1, 1, 1, 1, 1, 0, 0],
+          [0, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+          [0, 1, 0, 0, 0, 0, 0, 0, 1, 0],
+          [0, 1, 0, 1, 1, 0, 1, 0, 1, 0],
+          [0, 1, 0, 1, 1, 0, 1, 0, 1, 0],
+          [0, 1, 0, 1, 1, 0, 1, 0, 1, 0],
+          [0, 1, 1, 1, 1, 1, 1, 1, 1, 0]
+        ]
+      },
+
+      /* --- 상급 (15x15, 3 Questions) --- */
+      {
+        id: 7,
+        title: { ko: "고양이", en: "Cat", zh: "猫咪", ru: "Кошка" },
+        difficulty: "hard",
+        size: 15,
+        solution: [
+          [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+          [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0],
+          [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+          [1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0],
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+          [0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0],
+          [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+          [0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0],
+          [0, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0],
+          [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+          [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+          [1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1],
+          [0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1],
+          [0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0]
+        ]
+      },
+      {
+        id: 8,
+        title: { ko: "용사의 검", en: "Sword", zh: "勇者之剑", ru: "Меч героя" },
+        difficulty: "hard",
+        size: 15,
+        solution: [
+          [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+          [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+          [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0]
+        ]
+      },
+      {
+        id: 9,
+        title: { ko: "튤립 꽃", en: "Tulip Flower", zh: "郁金香", ru: "Тюльпан" },
+        difficulty: "hard",
+        size: 15,
+        solution: [
+          [0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0],
+          [0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0],
+          [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+          [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+          [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+          [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+          [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+          [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0],
+          [0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0],
+          [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+          [0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0]
+        ]
+      },
+
+      /* --- 고급 (20x20, 3 Questions) --- */
+      {
+        id: 10,
+        title: { ko: "우주 로켓", en: "Space Rocket", zh: "太空火箭", ru: "Космическая ракета" },
+        difficulty: "expert",
+        size: 20,
+        solution: [
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+          [0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0],
+          [0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0],
+          [0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0],
+          [1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1],
+          [0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        ]
+      },
+      {
+        id: 11,
+        title: { ko: "중세 성", en: "Castle", zh: "古老城堡", ru: "Средневековый замок" },
+        difficulty: "expert",
+        size: 20,
+        solution: [
+          [1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0],
+          [1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0],
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+          [1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0],
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+          [0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0],
+          [0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0],
+          [0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0],
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+          [1, 0, 0, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 1, 0],
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+          [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+          [0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0],
+          [0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0],
+          [0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0],
+          [0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0],
+          [0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0],
+          [1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0],
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0]
+        ]
+      },
+      {
+        id: 12,
+        title: { ko: "우주", en: "Space Universe", zh: "浩瀚宇宙", ru: "Космос" },
+        difficulty: "expert",
+        size: 20,
+        fixedRowClues: [
+          [6, 10], [5, 4, 1], [2, 1, 5, 3], [4, 2, 2, 3, 1], [4, 5, 8],
+          [4, 5, 1, 3, 1], [1, 1, 2, 2], [5, 2, 2], [3, 1, 1, 1, 3, 2], [2, 5, 3, 3],
+          [1, 1, 5], [1, 1, 4, 1], [5, 2, 6], [5, 4, 6], [4, 2, 4],
+          [3, 2, 3], [3, 9, 2], [3, 4, 6, 1], [1, 14, 1], [17]
+        ],
+        fixedColClues: [
+          [7, 9], [6, 6, 1], [2, 3, 2, 8], [6, 7, 2], [2, 1, 2, 2],
+          [1, 3], [4, 3, 3], [4, 1, 1, 4], [1, 2, 3, 8], [4, 1, 1, 5, 2],
+          [1, 4, 3, 1, 4], [2, 1, 4], [7, 1, 4], [5, 2, 5], [5, 2, 9],
+          [1, 5, 10], [1, 5, 5, 1], [1, 2, 6, 2], [2, 2, 5, 2, 1, 1], [1, 10]
+        ],
+        solution: [
+          [1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+          [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0],
+          [1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0],
+          [1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0],
+          [1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1],
+          [1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 0, 1],
+          [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1],
+          [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1],
+          [0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1],
+          [0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 1],
+          [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1],
+          [1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1],
+          [1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1],
+          [1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1],
+          [1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0],
+          [1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
+          [1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0],
+          [1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0],
+          [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0],
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0]
+        ]
+      }
+    ];
+
+    /* ========================================================
+       2. INITIALIZATION & STUDENT AUTH
+       ======================================================== */
+    function initStorage() {
+      const savedStudent = sessionStorage.getItem('ks_student');
+      if (savedStudent) {
+        try {
+          currentStudent = JSON.parse(savedStudent);
+          updateStudentBadge();
+        } catch (e) {
+          showLoginModal();
+        }
+      } else {
+        showLoginModal();
+      }
+
+      const savedCleared = sessionStorage.getItem('ks_cleared_stages');
+      if (savedCleared) {
+        try {
+          clearedStages = new Set(JSON.parse(savedCleared));
+        } catch (e) {}
+      }
+
+      renderIndicators();
+      loadStage(0);
+    }
+
+    function showLoginModal() {
+      const modal = document.getElementById('login-modal');
+      const stuidInput = document.getElementById('login-stuid-input');
+      const nameInput = document.getElementById('login-name-input');
+      const err = document.getElementById('login-error-msg');
+      
+      stuidInput.value = currentStudent.id || "";
+      nameInput.value = currentStudent.name || "";
+      err.classList.add('hidden');
+      modal.classList.remove('hidden');
+    }
+
+    function handleLoginSubmit() {
+      const stuid = document.getElementById('login-stuid-input').value.trim();
+      const name = document.getElementById('login-name-input').value.trim();
+      const err = document.getElementById('login-error-msg');
+
+      if (!stuid || !name) {
+        err.textContent = (currentLanguage === 'ko') ? "학번과 이름을 모두 입력해주세요." : "Please enter both Student ID and Name.";
+        err.classList.remove('hidden');
+        return;
+      }
+
+      currentStudent = { id: stuid, name: name };
+      sessionStorage.setItem('ks_student', JSON.stringify(currentStudent));
+      
+      updateStudentBadge();
+      document.getElementById('login-modal').classList.add('hidden');
+      showToast((currentLanguage === 'ko') ? `${name} 학생 환영합니다!` : `Welcome, ${name}!`);
+    }
+
+    function updateStudentBadge() {
+      const badge = document.getElementById('student-badge');
+      const info = document.getElementById('badge-info');
+      if (currentStudent.id && currentStudent.name) {
+        info.textContent = `${currentStudent.id} ${currentStudent.name}`;
+        badge.classList.remove('hidden');
+        badge.classList.add('flex');
+      } else {
+        badge.classList.add('hidden');
+      }
+    }
+
+    /* ========================================================
+       3. DUAL-LANGUAGE SYSTEM (Korean Base + Sub-language)
+       ======================================================== */
+    function setLanguage(lang) {
+      currentLanguage = lang;
+      
+      // Update top button active styling
+      ['ko', 'en', 'zh', 'ru'].forEach(l => {
+        const btn = document.getElementById(`lang-btn-${l}`);
+        if (l === lang) {
+          btn.className = "px-2.5 py-1 rounded-md text-xs font-bold transition bg-indigo-600 text-white shadow-sm";
+        } else {
+          btn.className = "px-2.5 py-1 rounded-md text-xs font-semibold text-slate-400 hover:text-slate-200 transition";
+        }
+      });
+
+      // Update static data-i18n elements
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[key]) {
+          const koText = translations[key].ko;
+          if (lang === 'ko') {
+            el.innerHTML = koText;
+          } else {
+            const foreignText = translations[key][lang] || translations[key].en;
+            el.innerHTML = `${koText} <span class="sub-lang text-indigo-300">(${foreignText})</span>`;
+          }
+        }
+      });
+
+      updateStageHeaderTitles();
+      updateProgressText();
+    }
+
+    function updateStageHeaderTitles() {
+      const stage = stages[currentStageIndex];
+      const titleEl = document.getElementById('stage-title-text');
+      const badgeEl = document.getElementById('current-stage-badge');
+      const sizeEl = document.getElementById('stage-size-text');
+
+      const koTitle = stage.title.ko;
+      if (currentLanguage === 'ko') {
+        titleEl.textContent = koTitle;
+        badgeEl.textContent = `스테이지 ${stage.id}`;
+        sizeEl.textContent = `${stage.size} × ${stage.size} 퍼즐`;
+      } else {
+        const foreignTitle = stage.title[currentLanguage] || stage.title.en;
+        titleEl.innerHTML = `${koTitle} <span class="sub-lang text-indigo-300">(${foreignTitle})</span>`;
+        badgeEl.textContent = `Stage ${stage.id}`;
+        sizeEl.textContent = `${stage.size} × ${stage.size} Grid`;
+      }
+    }
+
+    function updateProgressText() {
+      const progEl = document.getElementById('total-progress-text');
+      const count = clearedStages.size;
+      if (currentLanguage === 'ko') {
+        progEl.textContent = `${count} / 12 달성`;
+      } else if (currentLanguage === 'en') {
+        progEl.textContent = `${count} / 12 Cleared`;
+      } else if (currentLanguage === 'zh') {
+        progEl.textContent = `${count} / 12 完成`;
+      } else {
+        progEl.textContent = `${count} / 12 Пройдено`;
+      }
+    }
+
+    /* ========================================================
+       4. STAGE INDICATORS & PROGRESS
+       ======================================================== */
+    function renderIndicators() {
+      const groupMap = { novice: 0, medium: 1, hard: 2, expert: 3 };
+      
+      // Clear containers
+      for (let i = 0; i < 4; i++) {
+        document.getElementById(`indicator-group-${i}`).innerHTML = "";
+      }
+
+      stages.forEach((st, idx) => {
+        const gIdx = groupMap[st.difficulty];
+        const container = document.getElementById(`indicator-group-${gIdx}`);
+        
+        const isCurrent = (idx === currentStageIndex);
+        const isCleared = clearedStages.has(idx);
+
+        const btn = document.createElement('button');
+        btn.onclick = () => loadStage(idx);
+        btn.className = `flex-1 py-1 px-0.5 rounded-lg text-center transition flex flex-col items-center justify-center gap-0.5 ${
+          isCurrent 
+            ? 'bg-indigo-600/30 border border-indigo-400 text-white' 
+            : 'bg-slate-900/50 hover:bg-slate-800 text-slate-400 border border-slate-800'
+        }`;
+
+        // Circle indicator
+        const circle = document.createElement('div');
+        circle.className = `w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-black transition ${
+          isCleared 
+            ? 'bg-emerald-500 text-slate-950 shadow-sm shadow-emerald-500/50' 
+            : isCurrent
+              ? 'bg-indigo-500 text-white ring-2 ring-indigo-400/60'
+              : 'bg-slate-800 text-slate-400 border border-slate-700'
+        }`;
+        circle.innerHTML = isCleared ? '<i class="fa-solid fa-check"></i>' : (idx + 1);
+
+        const label = document.createElement('span');
+        label.className = "text-[9px] font-mono leading-none mt-0.5";
+        label.textContent = `#${st.id}`;
+
+        btn.appendChild(circle);
+        btn.appendChild(label);
+        container.appendChild(btn);
+      });
+
+      updateProgressText();
+    }
+
+    /* ========================================================
+       5. NONOGRAM BOARD GENERATION & RENDERING
+       ======================================================== */
+    function generateClues(grid, size) {
+      const rowClues = [];
+      const colClues = [];
+
+      // Row clues
+      for (let r = 0; r < size; r++) {
+        const clues = [];
+        let count = 0;
+        for (let c = 0; c < size; c++) {
+          if (grid[r][c] === 1) {
+            count++;
+          } else if (count > 0) {
+            clues.push(count);
+            count = 0;
+          }
+        }
+        if (count > 0) clues.push(count);
+        rowClues.push(clues.length > 0 ? clues : [0]);
+      }
+
+      // Col clues
+      for (let c = 0; c < size; c++) {
+        const clues = [];
+        let count = 0;
+        for (let r = 0; r < size; r++) {
+          if (grid[r][c] === 1) {
+            count++;
+          } else if (count > 0) {
+            clues.push(count);
+            count = 0;
+          }
+        }
+        if (count > 0) clues.push(count);
+        colClues.push(clues.length > 0 ? clues : [0]);
+      }
+
+      return { rowClues, colClues };
+    }
+
+    function loadStage(index) {
+      currentStageIndex = index;
+      const stage = stages[index];
+      const size = stage.size;
+
+      // Initialize empty user grid (0: empty, 1: filled, 2: X)
+      userGrid = Array.from({ length: size }, () => Array(size).fill(0));
+
+      // Calculate Clues
+      let rowClues, colClues;
+      if (stage.fixedRowClues && stage.fixedColClues) {
+        rowClues = stage.fixedRowClues;
+        colClues = stage.fixedColClues;
+      } else {
+        const clues = generateClues(stage.solution, size);
+        rowClues = clues.rowClues;
+        colClues = clues.colClues;
+      }
+
+      renderBoard(size, rowClues, colClues);
+      updateStageHeaderTitles();
+      renderIndicators();
+
+      // Scroll to start on mobile
+      const scrollArea = document.getElementById('board-scroll-area');
+      if (scrollArea) scrollArea.scrollLeft = 0;
+    }
+
+    function renderBoard(size, rowClues, colClues) {
+      const container = document.getElementById('nonogram-container');
+      container.innerHTML = "";
+
+      // Determine cell dimensions based on grid size for responsiveness
+      let cellSize = 38; // 5x5
+      let fontSize = "text-xs";
+      if (size === 10) { cellSize = 28; fontSize = "text-[11px]"; }
+      else if (size === 15) { cellSize = 22; fontSize = "text-[10px]"; }
+      else if (size === 20) { cellSize = 19; fontSize = "text-[9px]"; }
+
+      const table = document.createElement('table');
+      table.className = "border-collapse select-none mx-auto bg-white";
+
+      // Top Header: Column Clues
+      const thead = document.createElement('thead');
+      const headerRow = document.createElement('tr');
+
+      // Top-Left Corner Empty Cell
+      const cornerTh = document.createElement('th');
+      cornerTh.className = "bg-slate-100 border-r-2 border-b-2 border-slate-900 p-1";
+      headerRow.appendChild(cornerTh);
+
+      // Col Clues THs
+      for (let c = 0; c < size; c++) {
+        const th = document.createElement('th');
+        let classes = `col-clue align-bottom pb-1.5 pt-2 px-0.5 text-center font-bold ${fontSize}`;
+        if ((c + 1) % 5 === 0 && c !== size - 1) classes += " border-block-r";
+        th.className = classes;
+        th.style.width = `${cellSize}px`;
+        th.style.minWidth = `${cellSize}px`;
+
+        const clueList = colClues[c];
+        const clueDiv = document.createElement('div');
+        clueDiv.className = "flex flex-col items-center justify-end gap-0.5";
+        clueList.forEach(num => {
+          const s = document.createElement('span');
+          s.textContent = num;
+          s.className = "leading-tight text-slate-800";
+          clueDiv.appendChild(s);
+        });
+        th.appendChild(clueDiv);
+        headerRow.appendChild(th);
+      }
+      thead.appendChild(headerRow);
+      table.appendChild(thead);
+
+      // Table Body: Row Clues + Cells
+      const tbody = document.createElement('tbody');
+
+      for (let r = 0; r < size; r++) {
+        const tr = document.createElement('tr');
+
+        // Row Clue TH
+        const rowTh = document.createElement('th');
+        let rClasses = `row-clue text-right pr-2 pl-2 py-0.5 font-bold ${fontSize} whitespace-nowrap`;
+        if ((r + 1) % 5 === 0 && r !== size - 1) rClasses += " border-block-b";
+        rowTh.className = rClasses;
+
+        const rClues = rowClues[r];
+        const rowClueDiv = document.createElement('div');
+        rowClueDiv.className = "flex items-center justify-end gap-1.5";
+        rClues.forEach(num => {
+          const s = document.createElement('span');
+          s.textContent = num;
+          s.className = "leading-tight text-slate-800";
+          rowClueDiv.appendChild(s);
+        });
+        rowTh.appendChild(rowClueDiv);
+        tr.appendChild(rowTh);
+
+        // Grid Cells
+        for (let c = 0; c < size; c++) {
+          const td = document.createElement('td');
+          let cClasses = "nono-cell cell-empty";
+          if ((c + 1) % 5 === 0 && c !== size - 1) cClasses += " border-block-r";
+          if ((r + 1) % 5 === 0 && r !== size - 1) cClasses += " border-block-b";
+
+          td.className = cClasses;
+          td.id = `cell-${r}-${c}`;
+          td.style.width = `${cellSize}px`;
+          td.style.height = `${cellSize}px`;
+
+          // Mouse Interactions
+          td.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            isMouseDown = true;
+            handleCellStart(r, c, e.button === 2 ? 'mark' : toolMode);
+          });
+
+          td.addEventListener('mouseenter', () => {
+            if (isMouseDown) {
+              handleCellEnter(r, c);
+            }
+          });
+
+          // Prevent context menu for right click
+          td.addEventListener('contextmenu', (e) => e.preventDefault());
+
+          // Touch Interactions for Mobile
+          td.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            isMouseDown = true;
+            handleCellStart(r, c, toolMode);
+          }, { passive: false });
+
+          tr.appendChild(td);
+        }
+
+        tbody.appendChild(tr);
+      }
+
+      table.appendChild(tbody);
+      container.appendChild(table);
+
+      // Global Mouse / Touch Release
+      window.onmouseup = () => { isMouseDown = false; dragAction = null; };
+      window.ontouchend = () => { isMouseDown = false; dragAction = null; };
+
+      // Touchmove dragging support for mobile
+      container.ontouchmove = (e) => {
+        if (!isMouseDown) return;
+        const touch = e.touches[0];
+        const el = document.elementFromPoint(touch.clientX, touch.clientY);
+        if (el && el.id && el.id.startsWith('cell-')) {
+          const parts = el.id.split('-');
+          const tr = parseInt(parts[1], 10);
+          const tc = parseInt(parts[2], 10);
+          handleCellEnter(tr, tc);
+        }
+      };
+    }
+
+    /* ========================================================
+       6. INTERACTION LOGIC (DRAG, FILL, X-MARK)
+       ======================================================== */
+    function setToolMode(mode) {
+      toolMode = mode;
+      const fillBtn = document.getElementById('tool-fill-btn');
+      const markBtn = document.getElementById('tool-mark-btn');
+
+      if (mode === 'fill') {
+        fillBtn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition bg-indigo-600 text-white shadow-md";
+        markBtn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-400 hover:text-slate-200";
+      } else {
+        fillBtn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-400 hover:text-slate-200";
+        markBtn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition bg-rose-600 text-white shadow-md";
+      }
+    }
+
+    function handleCellStart(r, c, actionTool) {
+      const current = userGrid[r][c];
+
+      if (actionTool === 'fill') {
+        dragAction = (current === 1) ? 0 : 1;
+      } else if (actionTool === 'mark') {
+        dragAction = (current === 2) ? 0 : 2;
+      }
+
+      applyCellState(r, c, dragAction);
+    }
+
+    function handleCellEnter(r, c) {
+      if (dragAction === null) return;
+      applyCellState(r, c, dragAction);
+    }
+
+    function applyCellState(r, c, state) {
+      userGrid[r][c] = state;
+      const td = document.getElementById(`cell-${r}-${c}`);
+      if (!td) return;
+
+      td.classList.remove('cell-empty', 'cell-filled', 'cell-marked');
+      if (state === 0) td.classList.add('cell-empty');
+      else if (state === 1) td.classList.add('cell-filled');
+      else if (state === 2) td.classList.add('cell-marked');
+    }
+
+    function resetCurrentGrid() {
+      const size = stages[currentStageIndex].size;
+      for (let r = 0; r < size; r++) {
+        for (let c = 0; c < size; c++) {
+          applyCellState(r, c, 0);
+        }
+      }
+      showToast((currentLanguage === 'ko') ? "퍼즐이 초기화되었습니다." : "Puzzle reset.");
+    }
+
+    /* ========================================================
+       7. CHECK ANSWER & COMPLETION
+       ======================================================== */
+    function checkAnswer() {
+      const stage = stages[currentStageIndex];
+      const sol = stage.solution;
+      const size = stage.size;
+
+      let isCorrect = true;
+      let missingCount = 0;
+      let wrongCount = 0;
+
+      for (let r = 0; r < size; r++) {
+        for (let c = 0; c < size; c++) {
+          const userVal = userGrid[r][c] === 1 ? 1 : 0;
+          const solVal = sol[r][c];
+
+          if (solVal === 1 && userVal !== 1) {
+            missingCount++;
+            isCorrect = false;
+          } else if (solVal === 0 && userVal === 1) {
+            wrongCount++;
+            isCorrect = false;
+          }
+        }
+      }
+
+      if (isCorrect) {
+        handleSuccess();
+      } else {
+        const msg = (currentLanguage === 'ko')
+          ? `아직 완성되지 않았거나 틀린 부분이 있습니다. (미흡: ${missingCount + wrongCount}곳)`
+          : `Not quite right yet. Check clues carefully!`;
+        showToast(msg, "warning");
+      }
+    }
+
+    function handleSuccess() {
+      clearedStages.add(currentStageIndex);
+      sessionStorage.setItem('ks_cleared_stages', JSON.stringify(Array.from(clearedStages)));
+
+      renderIndicators();
+
+      // Confetti Effect
+      try {
+        confetti({
+          particleCount: 80,
+          spread: 70,
+          origin: { y: 0.6 }
+        });
+      } catch (e) {}
+
+      // Success Modal
+      const modal = document.getElementById('success-modal');
+      const stageNameEl = document.getElementById('success-stage-name');
+      const curStage = stages[currentStageIndex];
+
+      const koTitle = curStage.title.ko;
+      if (currentLanguage === 'ko') {
+        stageNameEl.textContent = `[${curStage.id}단계: ${koTitle}] 퍼즐을 멋지게 풀었습니다!`;
+      } else {
+        const foreignTitle = curStage.title[currentLanguage] || curStage.title.en;
+        stageNameEl.textContent = `Completed: ${koTitle} (${foreignTitle})`;
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeSuccessModal() {
+      document.getElementById('success-modal').classList.add('hidden');
+    }
+
+    function handleNextStageFromModal() {
+      closeSuccessModal();
+      nextStage();
+    }
+
+    function prevStage() {
+      if (currentStageIndex > 0) {
+        loadStage(currentStageIndex - 1);
+      } else {
+        showToast((currentLanguage === 'ko') ? "첫 번째 스테이지입니다." : "First stage.");
+      }
+    }
+
+    function nextStage() {
+      if (currentStageIndex < stages.length - 1) {
+        loadStage(currentStageIndex + 1);
+      } else {
+        showToast((currentLanguage === 'ko') ? "마지막 스테이지입니다! 모든 문제를 풀었습니다." : "Last stage!");
+      }
+    }
+
+    /* ========================================================
+       8. TUTORIAL & TOAST UTILITIES
+       ======================================================== */
+    function openTutorialModal() {
+      switchTutTab(1);
+      document.getElementById('tutorial-modal').classList.remove('hidden');
+    }
+
+    function closeTutorialModal() {
+      document.getElementById('tutorial-modal').classList.add('hidden');
+    }
+
+    function switchTutTab(tabIndex) {
+      const btn1 = document.getElementById('tut-tab-btn-1');
+      const btn2 = document.getElementById('tut-tab-btn-2');
+      const content1 = document.getElementById('tut-content-1');
+      const content2 = document.getElementById('tut-content-2');
+
+      if (tabIndex === 1) {
+        btn1.className = "pb-2.5 px-3 border-b-2 border-indigo-500 text-indigo-400 flex items-center gap-1.5 transition";
+        btn2.className = "pb-2.5 px-3 border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-1.5 transition";
+        content1.classList.remove('hidden');
+        content2.classList.add('hidden');
+      } else {
+        btn1.className = "pb-2.5 px-3 border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-1.5 transition";
+        btn2.className = "pb-2.5 px-3 border-b-2 border-indigo-500 text-indigo-400 flex items-center gap-1.5 transition";
+        content1.classList.add('hidden');
+        content2.classList.remove('hidden');
+      }
+    }
+
+    function showToast(message, type = "info") {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toast-message');
+      const toastIcon = document.getElementById('toast-icon');
+
+      toastMsg.textContent = message;
+      if (type === "warning") {
+        toastIcon.className = "fa-solid fa-triangle-exclamation text-amber-400";
+      } else {
+        toastIcon.className = "fa-solid fa-circle-check text-emerald-400";
+      }
+
+      toast.classList.remove('opacity-0', 'translate-y-3', 'pointer-events-none');
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-3', 'pointer-events-none');
+      }, 2400);
+    }
+
+    /* Start App on Window Load */
+    window.onload = function() {
+      initStorage();
+      setLanguage('ko');
+    };
+  </script>
+
+</body>
+</html>
